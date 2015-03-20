@@ -20,12 +20,19 @@ public class DBApp implements RequiredMethods {
 		htblColNameRefs.put("col1", "table1.id");
 
 		DBApp app = new DBApp();
+		/*
+		 * try { app.createTable("kareem", htblColNameType, htblColNameRefs,
+		 * "col1"); } catch (DBAppException e) { // TODO Auto-generated catch
+		 * block e.printStackTrace(); }
+		 */
+
 		try {
-			app.createTable("kareem", htblColNameType, htblColNameRefs, "col1");
+			app.createIndex("kareem", "col2");
 		} catch (DBAppException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 	}
 
 	@Override
@@ -45,12 +52,11 @@ public class DBApp implements RequiredMethods {
 		Enumeration ColNames = htblColNameType.keys();
 		while (ColNames.hasMoreElements()) {
 			String ColName = (String) ColNames.nextElement();
-			metaInfo += strTableName + ", " + ColName + ","
+			metaInfo += strTableName + ", " + ColName + ", "
 					+ htblColNameType.get(ColName) + ", "
 					+ ((ColName.equals(strKeyColName)) ? "true" : "false")
-					+ ", "
-					+ ((ColName.equals(strKeyColName)) ? "true" : "false")
-					+ ", " + htblColNameRefs.get(ColName) + "\n";
+					+ ", " + "false" + ", " + htblColNameRefs.get(ColName)
+					+ "\n";
 		}
 		try {
 			writeMetaAppend("metadata.csv", metaInfo);
@@ -80,12 +86,17 @@ public class DBApp implements RequiredMethods {
 		output.close();
 	}
 
-	public void readFile(String fileName) throws IOException {
+	public String readFile(String fileName) throws IOException {
 
 		BufferedReader br = new BufferedReader(new FileReader(fileName));
-		br.readLine();
+		String ret = "";
+		String line = "";
+		while ((line = br.readLine()) != null) {
+			ret += line + "\n";
+		}
 		br.close();
 
+		return ret;
 	}
 
 	@Override
@@ -93,6 +104,38 @@ public class DBApp implements RequiredMethods {
 			throws DBAppException {
 		// TODO Auto-generated method stub
 
+		// things to do
+
+		StringBuilder meta = new StringBuilder();
+		try {
+			meta.append(readFile("metadata.csv"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		int i = 0;
+		i = meta.indexOf(strTableName + ", " + strColName);
+		if (i != -1) {
+			int semCount = 0;
+			while (i < meta.length()) {
+				if (semCount == 4) {
+					meta.replace(i + 1, i + 6, "true");
+					break;
+				}
+				if (meta.charAt(i) == ',') {
+					semCount++;
+				}
+				i++;
+			}
+			try {
+				writeFile("metadata.csv", meta.toString());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("table is not found !");
+		}
 	}
 
 	@Override
