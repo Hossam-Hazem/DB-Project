@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -40,9 +41,7 @@ public class DBApp implements RequiredMethods {
 			throws DBAppException {
 		// TODO Auto-generated method stub
 
-		String metaInfo = "Table Name, Column Name, Column Type, Key, Indexed, References"
-				+ "\n";
-
+		String metaInfo = "";
 		Enumeration ColNames = htblColNameType.keys();
 		while (ColNames.hasMoreElements()) {
 			String ColName = (String) ColNames.nextElement();
@@ -54,12 +53,24 @@ public class DBApp implements RequiredMethods {
 					+ ", " + htblColNameRefs.get(ColName) + "\n";
 		}
 		try {
-			writeFile(strTableName + ".meta", metaInfo);
+			writeMetaAppend("metadata.csv", metaInfo);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
+	}
+
+	public void writeMetaAppend(String fileName, String text)
+			throws IOException {
+		File f = new File(fileName);
+		if (!f.exists()) {
+			text = "Table Name, Column Name, Column Type, Key, Indexed, References"
+					+ "\n" + text;
+		}
+		BufferedWriter output = new BufferedWriter(new FileWriter(fileName));
+		output.append(text);
+		output.close();
 	}
 
 	public void writeFile(String fileName, String text) throws IOException {
