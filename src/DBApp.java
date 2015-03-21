@@ -20,11 +20,12 @@ public class DBApp implements RequiredMethods {
 		htblColNameRefs.put("col1", "table1.id");
 
 		DBApp app = new DBApp();
-		/*
-		 * try { app.createTable("kareem", htblColNameType, htblColNameRefs,
-		 * "col1"); } catch (DBAppException e) { // TODO Auto-generated catch
-		 * block e.printStackTrace(); }
-		 */
+
+		try {
+			app.createTable("kareem", htblColNameType, htblColNameRefs, "col1");
+		} catch (DBAppException e) {
+			e.printStackTrace();
+		}
 
 		try {
 			app.createIndex("kareem", "col2");
@@ -74,8 +75,10 @@ public class DBApp implements RequiredMethods {
 			text = "Table Name, Column Name, Column Type, Key, Indexed, References"
 					+ "\n" + text;
 		}
+		String tmp = readFile(fileName) + text;
 		BufferedWriter output = new BufferedWriter(new FileWriter(fileName));
-		output.append(text);
+		output.write(tmp);
+		output.flush();
 		output.close();
 	}
 
@@ -87,15 +90,16 @@ public class DBApp implements RequiredMethods {
 	}
 
 	public String readFile(String fileName) throws IOException {
-
-		BufferedReader br = new BufferedReader(new FileReader(fileName));
 		String ret = "";
-		String line = "";
-		while ((line = br.readLine()) != null) {
-			ret += line + "\n";
+		File f = new File(fileName);
+		if (f.exists()) {
+			BufferedReader br = new BufferedReader(new FileReader(fileName));
+			String line = "";
+			while ((line = br.readLine()) != null) {
+				ret += line + "\n";
+			}
+			br.close();
 		}
-		br.close();
-
 		return ret;
 	}
 
@@ -119,6 +123,7 @@ public class DBApp implements RequiredMethods {
 			int semCount = 0;
 			while (i < meta.length()) {
 				if (semCount == 4) {
+					if(meta.substring(i + 1, i + 6).equals("false"))
 					meta.replace(i + 1, i + 6, "true");
 					break;
 				}
