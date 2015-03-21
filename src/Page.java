@@ -1,11 +1,11 @@
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Properties;
 
+@SuppressWarnings("serial")
 public class Page implements Serializable {
 	private  final int N;
 	private int CurrentRecords;
