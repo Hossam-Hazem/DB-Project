@@ -1,20 +1,33 @@
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Properties;
 
 public class Page implements Serializable {
-	private static final int N = 200;
+	private  final int N;
 	private int CurrentRecords;
 	ArrayList<Object> data;
 	int beginningID;
 	int endingID;
 
-	public Page(int B) {
+	public Page(int B) throws IOException {
+		N =  getPageSize();
+		System.out.println(N);;
 		data = new ArrayList<Object>(N);
 		CurrentRecords = 0;
 		beginningID = B;
 		endingID = B+N-1;
 	}
-
+	
+	public int getPageSize() throws IOException  {
+		InputStream input = new FileInputStream("DBApp.properties");
+		Properties prop = new Properties();
+		prop.load(input);
+		return Integer.parseInt(prop.getProperty("MaximumRowsCountinPage"));
+	}
 	public boolean insert(Object x) {
 		if(isFull())
 			return false;
@@ -36,5 +49,5 @@ public class Page implements Serializable {
 		else
 			return true;
 	}
-
+	
 }
