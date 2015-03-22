@@ -50,6 +50,7 @@ public class DBApp implements RequiredMethods {
 		// TODO Auto-generated method stub
 
 		String metaInfo = "";
+		
 		Enumeration ColNames = htblColNameType.keys();
 		while (ColNames.hasMoreElements()) {
 			String ColName = (String) ColNames.nextElement();
@@ -75,17 +76,10 @@ public class DBApp implements RequiredMethods {
 			text = "Table Name, Column Name, Column Type, Key, Indexed, References"
 					+ "\n" + text;
 		}
-		String tmp = readFile(fileName) + text;
-		BufferedWriter output = new BufferedWriter(new FileWriter(fileName));
-		output.write(tmp);
+		String tmp = text;
+		BufferedWriter output = new BufferedWriter(new FileWriter(f, true));
+		output.append(tmp);
 		output.flush();
-		output.close();
-	}
-
-	public void writeFile(String fileName, String text) throws IOException {
-
-		BufferedWriter output = new BufferedWriter(new FileWriter(fileName));
-		output.write(text);
 		output.close();
 	}
 
@@ -101,6 +95,12 @@ public class DBApp implements RequiredMethods {
 			br.close();
 		}
 		return ret;
+	}
+
+	public void writeFile(String fileName, String text) throws IOException {
+		BufferedWriter output = new BufferedWriter(new FileWriter(fileName));
+		output.write(text);
+		output.close();
 	}
 
 	@Override
@@ -123,8 +123,8 @@ public class DBApp implements RequiredMethods {
 			int semCount = 0;
 			while (i < meta.length()) {
 				if (semCount == 4) {
-					if(meta.substring(i + 1, i + 6).equals("false"))
-					meta.replace(i + 1, i + 6, "true");
+					if (meta.substring(i + 1, i + 6).equals("false"))
+						meta.replace(i + 1, i + 6, "true");
 					break;
 				}
 				if (meta.charAt(i) == ',') {

@@ -1,53 +1,94 @@
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Properties;
 
-@SuppressWarnings("serial")
-public class Page implements Serializable {
-	private  final int N;
-	private int CurrentRecords;
-	ArrayList<Object> data;
-	int beginningID;
-	int endingID;
-
-	public Page(int B) throws IOException {
-		N =  getPageSize();
-		System.out.println(N);;
-		data = new ArrayList<Object>(N);
-		CurrentRecords = 0;
-		beginningID = B;
-		endingID = B+N-1;
+public class Page implements Serializable{
+	private int MaximumRowsCountinPage;
+	private int rowsCounter;
+	private ArrayList<Hashtable<String, String>> records;
+	private String pageName;
+	
+	public Page(String pageName) throws IOException{
+		this.MaximumRowsCountinPage = getPageSize();
+		records = new ArrayList<Hashtable<String, String>>(MaximumRowsCountinPage);
+		rowsCounter = 0;
+		this.pageName = pageName;
+		System.out.println(this.MaximumRowsCountinPage);
+		
+		//create page
+		String path = pageName + ".class";
+		FileOutputStream fs = new FileOutputStream(path);
+		ObjectOutputStream os = new ObjectOutputStream(fs);
+		os.writeObject(this);
+		os.close();
+		fs.close();
 	}
 	
-	public int getPageSize() throws IOException  {
-		InputStream input = new FileInputStream("DBApp.properties");
+	public int getPageSize() throws IOException{
+		InputStream input = new FileInputStream("config/DBApp.properties");
 		Properties prop = new Properties();
 		prop.load(input);
 		return Integer.parseInt(prop.getProperty("MaximumRowsCountinPage"));
 	}
-	public boolean insert(Object x) {
-		if(isFull())
+	
+	
+	public boolean isFull(){
+		if(rowsCounter < MaximumRowsCountinPage){
 			return false;
-		CurrentRecords++;
-		data.add(x);
+		}
 		return true;
-		
-	}
-	public boolean remove(Object x){
-		if(data.isEmpty())
-			return false;
-		CurrentRecords--;
-		return data.remove(x);
-	}
-
-	public boolean isFull() {
-		if (CurrentRecords < N)
-			return false;
-		else
-			return true;
 	}
 	
+	
+	
+	public static void main(String[] args) throws IOException {
+		new Page("0");
+	}
+
+	public int getMaximumRowsCountinPage() {
+		return MaximumRowsCountinPage;
+	}
+
+	public void setMaximumRowsCountinPage(int maximumRowsCountinPage) {
+		MaximumRowsCountinPage = maximumRowsCountinPage;
+	}
+
+	public int getRowsCounter() {
+		return rowsCounter;
+	}
+
+	public void setRowsCounter(int rowsCounter) {
+		this.rowsCounter = rowsCounter;
+	}
+
+	
+
+	
+
+	public ArrayList<Hashtable<String, String>> getRecords() {
+		return records;
+	}
+
+	public void setRecords(ArrayList<Hashtable<String, String>> records) {
+		this.records = records;
+	}
+
+	public String getPageName() {
+		return pageName;
+	}
+
+	public void setPageName(String pageName) {
+		this.pageName = pageName;
+	}
+
+	public void addRecord(Hashtable<String, String> htblColNameValue) {
+		records.add(htblColNameValue);
+		
+	}
 }
