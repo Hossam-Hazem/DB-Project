@@ -1,183 +1,237 @@
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Enumeration;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
-public class DBApp implements RequiredMethods {
-	public static void main(String[] args) {
-		Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
-		htblColNameType.put("col1", "str");
-		htblColNameType.put("col2", "int");
-		htblColNameType.put("col3", "int");
-		htblColNameType.put("col4", "str");
+public class DBApp {
+	static String tempTabe;
 
-		Hashtable<String, String> htblColNameRefs = new Hashtable<String, String>();
-		htblColNameRefs.put("col1", "table1.id");
-
-		DBApp app = new DBApp();
-
-		try {
-			app.createTable("kareem", htblColNameType, htblColNameRefs, "col1");
-		} catch (DBAppException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			app.createIndex("kareem", "col2");
-		} catch (DBAppException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-
-	@Override
-	public void init() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void createTable(String strTableName,
+	@SuppressWarnings("rawtypes")
+	public static void createTable(String strTableName,
 			Hashtable<String, String> htblColNameType,
 			Hashtable<String, String> htblColNameRefs, String strKeyColName)
-			throws DBAppException {
-		// TODO Auto-generated method stub
+			throws DBAppException, IOException {
+		if(alreadyExist(strTableName)==false){
+		FileReader fileReader = new FileReader("data/metadata.csv");
+		BufferedReader br = new BufferedReader(fileReader);
+		String x = br.readLine();
 
-		String metaInfo = "";
-		Enumeration ColNames = htblColNameType.keys();
-		while (ColNames.hasMoreElements()) {
-			String ColName = (String) ColNames.nextElement();
-			metaInfo += strTableName + ", " + ColName + ", "
-					+ htblColNameType.get(ColName) + ", "
-					+ ((ColName.equals(strKeyColName)) ? "true" : "false")
-					+ ", " + "false" + ", " + htblColNameRefs.get(ColName)
-					+ "\n";
-		}
-		try {
-			writeMetaAppend("metadata.csv", metaInfo);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		FileWriter fileWriter = new FileWriter("data/metadata.csv", true);
+
+		if (x == null) {
+			fileWriter
+					.append("Table Name, Column Name, Column Type, Key, Indexed, References");
+			fileWriter.append("\n");
 		}
 
-	}
+		Set set = htblColNameType.entrySet();
+		Iterator it = set.iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry) it.next();
+			String temp = strTableName + ", " + (String) entry.getKey() + ", "
+					+ (String) entry.getValue() + ", "
+					+ (entry.getKey().equals(strKeyColName) ? "true" : "false")
+					+ ", " + "false" + ", "
+					+ htblColNameRefs.get(entry.getKey()) + "\n";
 
-	public void writeMetaAppend(String fileName, String text)
-			throws IOException {
-		File f = new File(fileName);
-		if (!f.exists()) {
-			text = "Table Name, Column Name, Column Type, Key, Indexed, References"
-					+ "\n" + text;
+			fileWriter.append(temp);
+			System.out.println(entry.getKey() + " : " + entry.getValue());
 		}
-		String tmp = readFile(fileName) + text;
-		BufferedWriter output = new BufferedWriter(new FileWriter(fileName));
-		output.write(tmp);
-		output.flush();
-		output.close();
+		br.close();
+		fileWriter.close();
+		}
+		makeTable(strTableName);
+	}
+	
+	private static void makeTable(String strTableName) throws IOException {
+		Table x = new Table(strTableName);
+		String path = "data/tables/"+strTableName+".bin";
+		File saveDir = new File("data/tables");
+		if(!saveDir.exists()){
+		    saveDir.mkdirs(); 
+		}
+		/*
+		FileOutputStream fs = new FileOutputStream(path);
+		ObjectOutputStream os = new ObjectOutputStream(fs);
+		os.writeObject(x);
+		os.close();
+		fs.close();
+		*/
+		serialize(path, x);
 	}
 
-	public void writeFile(String fileName, String text) throws IOException {
-
-		BufferedWriter output = new BufferedWriter(new FileWriter(fileName));
-		output.write(text);
-		output.close();
-	}
-
-	public String readFile(String fileName) throws IOException {
-		String ret = "";
-		File f = new File(fileName);
-		if (f.exists()) {
-			BufferedReader br = new BufferedReader(new FileReader(fileName));
-			String line = "";
-			while ((line = br.readLine()) != null) {
-				ret += line + "\n";
+	public static boolean alreadyExist(String strTableName) throws IOException{
+		boolean found = false;
+		String currentLine = "";
+		FileReader fileReader= new FileReader("data/metadata.csv");
+		BufferedReader br = new BufferedReader(fileReader);
+		while ((currentLine = br.readLine()) != null) {
+			String [] result= currentLine.split(", ");
+			if(result[0].equals(strTableName)){
+				found = true;
+				break;
 			}
-			br.close();
 		}
-		return ret;
+		br.close();
+		return found;
+		
 	}
 
-	@Override
-	public void createIndex(String strTableName, String strColName)
-			throws DBAppException {
-		// TODO Auto-generated method stub
+	public static void createIndex(String strTableName, String strColName)
+			throws DBAppException, IOException {
+		String currentLine = "";
+		FileReader fileReader = new FileReader("data/metadata.csv");
+		BufferedReader br = new BufferedReader(fileReader);
+		ArrayList<String[]> x = new ArrayList<String[]>();
 
-		// things to do
-
-		StringBuilder meta = new StringBuilder();
-		try {
-			meta.append(readFile("metadata.csv"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		while ((currentLine = br.readLine()) != null) {
+			String[] temp = currentLine.split(", ");
+			x.add(temp);
 		}
-		int i = 0;
-		i = meta.indexOf(strTableName + ", " + strColName);
-		if (i != -1) {
-			int semCount = 0;
-			while (i < meta.length()) {
-				if (semCount == 4) {
-					if(meta.substring(i + 1, i + 6).equals("false"))
-					meta.replace(i + 1, i + 6, "true");
-					break;
-				}
-				if (meta.charAt(i) == ',') {
-					semCount++;
-				}
-				i++;
+		FileWriter fileWriter = new FileWriter("data/metadata.csv");
+		for (int i = 0; i < x.size(); i++) {
+			if (x.get(i)[0].equals(strTableName)
+					&& x.get(i)[1].equals(strColName)) {
+				fileWriter.append(x.get(i)[0] + ", " + x.get(i)[1] + ", "
+						+ x.get(i)[2] + ", " + x.get(i)[3] + ", " + "true"
+						+ ", " + x.get(i)[5] + "\n");
+			} else {
+				fileWriter.append(x.get(i)[0] + ", " + x.get(i)[1] + ", "
+						+ x.get(i)[2] + ", " + x.get(i)[3] + ", " + x.get(i)[4]
+						+ ", " + x.get(i)[5] + "\n");
 			}
-			try {
-				writeFile("metadata.csv", meta.toString());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else {
-			System.out.println("table is not found !");
 		}
+		System.out.println("Index Done");
+		br.close();
+		fileWriter.close();
 	}
 
-	@Override
-	public void insertIntoTable(String strTableName,
-			Hashtable<String, String> htblColNameValue) throws DBAppException {
-		// TODO Auto-generated method stub
-
+	// Under Construction
+	public static void insertIntoTable(String strTableName,
+			Hashtable<String, String> htblColNameValue) throws DBAppException, ClassNotFoundException, IOException {
+		String path = "data/tables/" + strTableName+".bin";
+		Table x = (Table)deserialize(path);
+		if(x.getAllPages().size() == 0){
+			x.createPage();
+			System.out.println("yup");
+		}
+		
+		String lastPage = x.getAllPages().get(x.getAllPages().size()-1);
+		System.out.println(lastPage);
+		System.out.println(lastPage);
+		path ="data/pages/"+strTableName+"/"+lastPage+".bin";
+		Page lastPageinTable = (Page)deserialize(path);
+		if(lastPageinTable.getRowsCounter() < lastPageinTable.getMaximumRowsCountinPage()){
+			lastPageinTable.addRecord(htblColNameValue);
+			lastPageinTable.setRowsCounter(lastPageinTable.getRowsCounter()+1);
+		}
+		else{
+			x.createPage(); //already added in the method to the array
+			lastPage = x.getAllPages().get(x.getAllPages().size()-1);
+			System.out.println("*"+lastPage+"*");
+			path ="data/pages/"+strTableName+"/"+lastPage+".bin";
+			lastPageinTable = (Page)deserialize(path);
+			lastPageinTable.addRecord(htblColNameValue);
+			lastPageinTable.setRowsCounter(lastPageinTable.getRowsCounter() + 1);
+			System.out.println("upu");
+			
+		}
+		path = "data/tables/" + strTableName+".bin";
+		serialize(path, x);
+		path = "data/pages/" + strTableName+"/"+lastPage+".bin";
+		serialize(path, lastPageinTable);
+		
+		
+		
+		
+		
 	}
-
-	@Override
-	public void deleteFromTable(String strTableName,
-			Hashtable<String, String> htblColNameValue, String strOperator)
-			throws DBEngineException {
-		// TODO Auto-generated method stub
-
+	
+	public static Object deserialize(String path) throws IOException, ClassNotFoundException{
+		FileInputStream fi = new FileInputStream(path);
+		ObjectInputStream os = new ObjectInputStream(fi);
+		Object x =  os.readObject();
+		//System.out.println(((Page)x).getRecords().get(0));
+		os.close();
+		fi.close();
+		return x;
 	}
-
-	@Override
-	public Iterator selectValueFromTable(String strTable,
-			Hashtable<String, String> htblColNameValue, String strOperator)
-			throws DBEngineException {
-		// TODO Auto-generated method stub
-		return null;
+	
+	public static void  serialize(String path, Object x) throws IOException{
+		FileOutputStream fs = new FileOutputStream(path);
+		ObjectOutputStream os = new ObjectOutputStream(fs);
+		os.writeObject(x);
+		os.close();
+		fs.close();
 	}
+	
 
-	@Override
-	public Iterator selectRangeFromTable(String strTable,
-			Hashtable<String, String> htblColNameRange, String strOperator)
-			throws DBEngineException {
-		// TODO Auto-generated method stub
-		return null;
+	public static void main(String[] args) throws IOException, DBAppException, ClassNotFoundException {
+		/*
+		  Hashtable<String, String> htblColNameType = new Hashtable<String,
+		  String>(); htblColNameType.put("col1", "str");
+		  htblColNameType.put("col2", "int"); htblColNameType.put("col3",
+		  "int"); htblColNameType.put("col4", "str");
+		  
+		  Hashtable<String, String> htblColNameRefs = new Hashtable<String,
+		  String>(); htblColNameRefs.put("col1", "table1.id");
+		  
+		  createTable("testAll2", htblColNameType, htblColNameRefs, "col2");
+		 */
+		//createIndex("testAll", "col3");
+
+		// Clean csv file
+		/*
+		 * FileWriter fileWriter = new FileWriter("data/metadata.csv");
+		 * fileWriter.append("");
+		 */
+		//System.out.println(alreadyExist("test10"));
+		
+		//makeTable("test4")
+		  /*
+		FileInputStream fi = new FileInputStream("data/tables/test4.bin");
+		ObjectInputStream os = new ObjectInputStream(fi);
+		Table x =  (Table)os.readObject();
+		System.out.println(x.getTableName());
+		os.close();
+		fi.close();
+		*/
+		
+		for (int i = 0; i < 200; i++) {
+			Hashtable<String, String> insertion = new Hashtable<String,
+					  String>(); insertion.put("col1", "str");
+					  insertion.put("col2", "int"); insertion.put("col3",
+					  "int"); insertion.put("col4", "str");
+					  
+			  insertIntoTable("testAll2", insertion);
+		}
+		
+		/*
+		 	Hashtable<String, String> insertion = new Hashtable<String,
+					  String>(); insertion.put("col1", "str");
+					  insertion.put("col2", "int"); insertion.put("col3",
+					  "int"); insertion.put("col4", "str");
+					  
+			  insertIntoTable("testAll2", insertion);
+			  */
+				Page x = (Page)deserialize("data/pages/testAll2/1.bin");
+				System.out.println(x.getRecords());
+				
+		
+		
 	}
-
-	@Override
-	public void saveAll() throws DBEngineException {
-		// TODO Auto-generated method stub
-
-	}
-
 }
+
+// createTable Done
+// createInsex Done
+// insertIntoTable Under Construction
