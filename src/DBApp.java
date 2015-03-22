@@ -53,6 +53,7 @@ public class DBApp {
 			htblColNameValue.put("col1", "ana kareem");
 			page.addRecord(htblColNameValue);
 			ArrayList<Hashtable<String, String>> tmp = page.getRecords();
+
 			System.out.println(tmp.get(0).get("col1"));
 
 		} catch (IOException | ClassNotFoundException e) {

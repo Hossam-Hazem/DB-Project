@@ -34,12 +34,15 @@ public class Table {
 				Iterator itr = array.iterator();
 				while (itr.hasNext()) {
 					String page = (String) itr.next();
-					if (Integer.parseInt(page.substring(1).replace(".class", "")) > Integer
-							.parseInt(lastPage.substring(1).replace(".class", ""))) {
+					if (Integer.parseInt(page.substring(1)
+							.replace(".class", "")) > Integer.parseInt(lastPage
+							.substring(1).replace(".class", ""))) {
 						lastPage = page;
 					}
 				}
-				nameCounter = Integer.parseInt(lastPage.substring(1).replace(".class", ""));
+				nameCounter = Integer.parseInt(lastPage.substring(1).replace(
+						".class", ""));
+				nameCounter += 200;
 				pages = array;
 			}
 		}
@@ -47,7 +50,7 @@ public class Table {
 	}
 
 	public void createPage() throws IOException {
-		new Page(tablesDir + name + "/p" + nameCounter);
+		new Page(tablesDir + name + "/p" + nameCounter,"p" + nameCounter);
 		pages.add("p" + nameCounter + ".class");
 		nameCounter++;
 

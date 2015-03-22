@@ -1,4 +1,5 @@
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,17 +14,23 @@ public class Page implements Serializable {
 	private int rowsCounter;
 	private ArrayList<Hashtable<String, String>> records;
 	private String pageName;
+	private String pageDir;
 
-	public Page(String pageName) throws IOException {
+	public Page(String pageDir, String pageName) throws IOException {
 		this.MaximumRowsCountinPage = getPageSize();
 		records = new ArrayList<Hashtable<String, String>>(
 				MaximumRowsCountinPage);
 		rowsCounter = 0;
 		this.pageName = pageName;
+		this.pageDir = pageDir;
 		System.out.println(this.MaximumRowsCountinPage);
 
 		// create page
-		String path = pageName + ".class";
+		writePage();
+	}
+
+	public void writePage() throws IOException {
+		String path = pageDir + ".class";
 		FileOutputStream fs = new FileOutputStream(path);
 		ObjectOutputStream os = new ObjectOutputStream(fs);
 		os.writeObject(this);
@@ -43,10 +50,6 @@ public class Page implements Serializable {
 			return false;
 		}
 		return true;
-	}
-
-	public static void main(String[] args) throws IOException {
-		new Page("0");
 	}
 
 	public int getMaximumRowsCountinPage() {
@@ -81,8 +84,16 @@ public class Page implements Serializable {
 		this.pageName = pageName;
 	}
 
-	public void addRecord(Hashtable<String, String> htblColNameValue) {
+	public void addRecord(Hashtable<String, String> htblColNameValue) throws IOException {
 		records.add(htblColNameValue);
+		writePage();
+	}
 
+	public String getPageDir() {
+		return pageDir;
+	}
+
+	public void setPageDir(String pageDir) {
+		this.pageDir = pageDir;
 	}
 }
