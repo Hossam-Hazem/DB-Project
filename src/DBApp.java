@@ -9,7 +9,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-public class DBApp implements RequiredMethods {
+public class DBApp {
 	public static void main(String[] args) {
 
 		// initialization of hash tables
@@ -46,7 +46,7 @@ public class DBApp implements RequiredMethods {
 		try {
 
 			Table table = new Table("kareem");
-			
+
 			table.createPage();
 			Page page = table.readPage(table.getPages().get(0));
 			Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
@@ -64,13 +64,11 @@ public class DBApp implements RequiredMethods {
 
 	}
 
-	@Override
 	public void init() {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void createTable(String strTableName,
 			Hashtable<String, String> htblColNameType,
 			Hashtable<String, String> htblColNameRefs, String strKeyColName)
@@ -133,7 +131,6 @@ public class DBApp implements RequiredMethods {
 		output.close();
 	}
 
-	@Override
 	public void createIndex(String strTableName, String strColName)
 			throws DBAppException {
 		// TODO Auto-generated method stub
@@ -173,14 +170,12 @@ public class DBApp implements RequiredMethods {
 		}
 	}
 
-	@Override
 	public void insertIntoTable(String strTableName,
 			Hashtable<String, String> htblColNameValue) throws DBAppException {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void deleteFromTable(String strTableName,
 			Hashtable<String, String> htblColNameValue, String strOperator)
 			throws DBEngineException {
@@ -188,7 +183,6 @@ public class DBApp implements RequiredMethods {
 
 	}
 
-	@Override
 	public Iterator selectValueFromTable(String strTable,
 			Hashtable<String, String> htblColNameValue, String strOperator)
 			throws DBEngineException {
@@ -196,7 +190,6 @@ public class DBApp implements RequiredMethods {
 		return null;
 	}
 
-	@Override
 	public Iterator selectRangeFromTable(String strTable,
 			Hashtable<String, String> htblColNameRange, String strOperator)
 			throws DBEngineException {
@@ -204,7 +197,6 @@ public class DBApp implements RequiredMethods {
 		return null;
 	}
 
-	@Override
 	public void saveAll() throws DBEngineException {
 		// TODO Auto-generated method stub
 

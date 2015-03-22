@@ -8,20 +8,21 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Properties;
 
-public class Page implements Serializable{
+public class Page implements Serializable {
 	private int MaximumRowsCountinPage;
 	private int rowsCounter;
 	private ArrayList<Hashtable<String, String>> records;
 	private String pageName;
-	
-	public Page(String pageName) throws IOException{
+
+	public Page(String pageName) throws IOException {
 		this.MaximumRowsCountinPage = getPageSize();
-		records = new ArrayList<Hashtable<String, String>>(MaximumRowsCountinPage);
+		records = new ArrayList<Hashtable<String, String>>(
+				MaximumRowsCountinPage);
 		rowsCounter = 0;
 		this.pageName = pageName;
 		System.out.println(this.MaximumRowsCountinPage);
-		
-		//create page
+
+		// create page
 		String path = pageName + ".class";
 		FileOutputStream fs = new FileOutputStream(path);
 		ObjectOutputStream os = new ObjectOutputStream(fs);
@@ -29,24 +30,21 @@ public class Page implements Serializable{
 		os.close();
 		fs.close();
 	}
-	
-	public int getPageSize() throws IOException{
+
+	public int getPageSize() throws IOException {
 		InputStream input = new FileInputStream("config/DBApp.properties");
 		Properties prop = new Properties();
 		prop.load(input);
 		return Integer.parseInt(prop.getProperty("MaximumRowsCountinPage"));
 	}
-	
-	
-	public boolean isFull(){
-		if(rowsCounter < MaximumRowsCountinPage){
+
+	public boolean isFull() {
+		if (rowsCounter < MaximumRowsCountinPage) {
 			return false;
 		}
 		return true;
 	}
-	
-	
-	
+
 	public static void main(String[] args) throws IOException {
 		new Page("0");
 	}
@@ -67,10 +65,6 @@ public class Page implements Serializable{
 		this.rowsCounter = rowsCounter;
 	}
 
-	
-
-	
-
 	public ArrayList<Hashtable<String, String>> getRecords() {
 		return records;
 	}
@@ -89,6 +83,6 @@ public class Page implements Serializable{
 
 	public void addRecord(Hashtable<String, String> htblColNameValue) {
 		records.add(htblColNameValue);
-		
+
 	}
 }
