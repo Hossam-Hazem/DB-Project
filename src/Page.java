@@ -6,7 +6,9 @@ import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Properties;
 
 public class Page implements Serializable {
@@ -84,8 +86,47 @@ public class Page implements Serializable {
 		this.pageName = pageName;
 	}
 
-	public void addRecord(Hashtable<String, String> htblColNameValue) throws IOException {
+	public void addRecord(Hashtable<String, String> htblColNameValue)
+			throws IOException {
 		records.add(htblColNameValue);
+		writePage();
+	}
+
+	public void deleteRecord(Hashtable<String, String> htblColNameValue)
+			throws IOException {
+
+		boolean exists = false;
+		boolean removeThis = false;
+		for (int i = 0; i < records.size(); i++) {
+			Hashtable<String, String> currentHtblColNameValue = records.get(i);
+			Enumeration ColNames = htblColNameValue.keys();
+			Enumeration currentColNames = currentHtblColNameValue.keys();
+			while (ColNames.hasMoreElements()) {
+				String ColName = (String) ColNames.nextElement();
+				while (currentColNames.hasMoreElements()) {
+					String currentColName = (String) currentColNames
+							.nextElement();
+					if (currentHtblColNameValue.get(currentColName) == htblColNameValue
+							.get(ColName)) {
+						exists = true;
+						break;
+					}
+				}
+				if (!exists) {
+					removeThis = false;
+					break;
+				} else {
+					removeThis = true;
+				}
+				exists = false;
+			}
+			if (removeThis) {
+				Hashtable<String, String> tmp = records.get(i);
+				tmp.clear();
+				tmp = null;
+			}
+		}
+
 		writePage();
 	}
 
