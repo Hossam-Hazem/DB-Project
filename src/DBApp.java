@@ -13,6 +13,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import BPTree.BTree;
+
 public class DBApp {
 	static String tempTabe;
 
@@ -54,9 +56,10 @@ public class DBApp {
 			br.close();
 			fileWriter.close();
 		}
-		makeTable(strTableName);
+		//makeTable(strTableName);
+		new Table(strTableName,strKeyColName);
 	}
-
+/*
 	private static void makeTable(String strTableName) throws IOException {
 		Table x = new Table(strTableName);
 		String path = "data/tables/" + strTableName + "/" + strTableName
@@ -81,13 +84,14 @@ public class DBApp {
 		if (!saveDir.exists()) {
 			saveDir.mkdirs();
 		}
-		/*
-		 * FileOutputStream fs = new FileOutputStream(path); ObjectOutputStream
-		 * os = new ObjectOutputStream(fs); os.writeObject(x); os.close();
-		 * fs.close();
-		 */
+		//
+		 // FileOutputStream fs = new FileOutputStream(path); ObjectOutputStream
+		 // os = new ObjectOutputStream(fs); os.writeObject(x); os.close();
+		 // fs.close();
+		 //
 		serialize(path, x);
 	}
+*/
 
 	public static boolean alreadyExist(String strTableName) throws IOException {
 		boolean found = false;
@@ -106,8 +110,9 @@ public class DBApp {
 
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void createIndex(String strTableName, String strColName)
-			throws DBAppException, IOException {
+			throws DBAppException, IOException, ClassNotFoundException {
 		String currentLine = "";
 		FileReader fileReader = new FileReader("data/metadata.csv");
 		BufferedReader br = new BufferedReader(fileReader);
@@ -130,9 +135,28 @@ public class DBApp {
 						+ ", " + x.get(i)[5] + "\n");
 			}
 		}
-		System.out.println("Index Done");
 		br.close();
 		fileWriter.close();
+		////Indexing
+		String Tablepath = "data/tables/" + strTableName + "/" + strTableName
+				+ ".bin";
+		Table T = (Table) deserialize(Tablepath);
+		BTree B = new BTree();
+		LinearHashtable L = new LinearHashtable();
+		for(int i=0;i<T.getNameCounter();i++){
+			String Pagepath = "data/tables/" + strTableName + "/" + "pages/"+i;
+			Page P = (Page) deserialize(Pagepath);
+			ArrayList<Hashtable<String, String>> AllRecords =P.getRecords();
+			for(int j=0;j<P.getRowsCounter();j++){
+				Hashtable<String, String> r =AllRecords.get(j); 
+				String c =r.get(strColName);
+				B.put(c, r);
+				L.put(c, r);
+			}
+			
+		}
+		System.out.println("Index Done");
+		
 	}
 
 	// Under Construction
@@ -144,7 +168,7 @@ public class DBApp {
 		Table x = (Table) deserialize(path);
 		if (x.getAllPages().size() == 0) {
 			x.createPage();
-			System.out.println("First page intialized");
+			System.out.println("YAAAAY First page intialized");
 		}
 
 		String lastPage = x.getAllPages().get(x.getAllPages().size() - 1);

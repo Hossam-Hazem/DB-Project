@@ -81,6 +81,7 @@ public class Page implements Serializable{
 
 	public void addRecord(Hashtable<String, String> htblColNameValue) {
 		records.add(htblColNameValue);
+	//	rowsCounter++;
 		
 	}
 }
