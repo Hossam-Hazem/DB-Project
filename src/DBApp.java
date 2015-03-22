@@ -56,42 +56,26 @@ public class DBApp {
 			br.close();
 			fileWriter.close();
 		}
-		//makeTable(strTableName);
-		new Table(strTableName,strKeyColName);
+		// makeTable(strTableName);
+		new Table(strTableName, strKeyColName);
 	}
-/*
-	private static void makeTable(String strTableName) throws IOException {
-		Table x = new Table(strTableName);
-		String path = "data/tables/" + strTableName + "/" + strTableName
-				+ ".bin";
-		// make folder containing all table info
-		File saveDir = new File("data/tables");
-		if (!saveDir.exists()) {
-			saveDir.mkdirs();
-		}
-		// make pages directory inside table folder
-		saveDir = new File("data/tables/" + strTableName + "/" + "pages");
-		if (!saveDir.exists()) {
-			saveDir.mkdirs();
-		}
-		// make hashtable directory inside table folder
-		saveDir = new File("data/tables/" + strTableName + "/" + "hashtable");
-		if (!saveDir.exists()) {
-			saveDir.mkdirs();
-		}
-		// make BTree directory inside table folder
-		saveDir = new File("data/tables/" + strTableName + "/" + "BTree");
-		if (!saveDir.exists()) {
-			saveDir.mkdirs();
-		}
-		//
-		 // FileOutputStream fs = new FileOutputStream(path); ObjectOutputStream
-		 // os = new ObjectOutputStream(fs); os.writeObject(x); os.close();
-		 // fs.close();
-		 //
-		serialize(path, x);
-	}
-*/
+
+	/*
+	 * private static void makeTable(String strTableName) throws IOException {
+	 * Table x = new Table(strTableName); String path = "data/tables/" +
+	 * strTableName + "/" + strTableName + ".bin"; // make folder containing all
+	 * table info File saveDir = new File("data/tables"); if (!saveDir.exists())
+	 * { saveDir.mkdirs(); } // make pages directory inside table folder saveDir
+	 * = new File("data/tables/" + strTableName + "/" + "pages"); if
+	 * (!saveDir.exists()) { saveDir.mkdirs(); } // make hashtable directory
+	 * inside table folder saveDir = new File("data/tables/" + strTableName +
+	 * "/" + "hashtable"); if (!saveDir.exists()) { saveDir.mkdirs(); } // make
+	 * BTree directory inside table folder saveDir = new File("data/tables/" +
+	 * strTableName + "/" + "BTree"); if (!saveDir.exists()) { saveDir.mkdirs();
+	 * } // // FileOutputStream fs = new FileOutputStream(path);
+	 * ObjectOutputStream // os = new ObjectOutputStream(fs); os.writeObject(x);
+	 * os.close(); // fs.close(); // serialize(path, x); }
+	 */
 
 	public static boolean alreadyExist(String strTableName) throws IOException {
 		boolean found = false;
@@ -137,26 +121,35 @@ public class DBApp {
 		}
 		br.close();
 		fileWriter.close();
-		////Indexing
+		// //Indexing
 		String Tablepath = "data/tables/" + strTableName + "/" + strTableName
 				+ ".bin";
 		Table T = (Table) deserialize(Tablepath);
+		T.addIndextoArray(strColName);
 		BTree B = new BTree();
 		LinearHashtable L = new LinearHashtable();
-		for(int i=0;i<T.getNameCounter();i++){
-			String Pagepath = "data/tables/" + strTableName + "/" + "pages/"+i;
+		for (int i = 0; i < T.getNameCounter(); i++) {
+			String Pagepath = "data/tables/" + strTableName + "/" + "pages/"
+					+ i;
 			Page P = (Page) deserialize(Pagepath);
-			ArrayList<Hashtable<String, String>> AllRecords =P.getRecords();
-			for(int j=0;j<P.getRowsCounter();j++){
-				Hashtable<String, String> r =AllRecords.get(j); 
-				String c =r.get(strColName);
+			ArrayList<Hashtable<String, String>> AllRecords = P.getRecords();
+			for (int j = 0; j < P.getRowsCounter(); j++) {
+				Hashtable<String, String> r = AllRecords.get(j);
+				String c = r.get(strColName);
 				B.put(c, r);
 				L.put(c, r);
 			}
-			
+
 		}
+		String BTreePath = "data/tables/" + strTableName + "/" + "BTree/"
+				+ strColName + ".bin";
+		String LHTPath = "data/tables/" + strTableName + "/" + "hashtable/"
+				+ strColName + ".bin";
+		serialize(Tablepath, T);
+		serialize(BTreePath, B);
+		serialize(LHTPath, L);
 		System.out.println("Index Done");
-		
+
 	}
 
 	// Under Construction
@@ -172,8 +165,8 @@ public class DBApp {
 		}
 
 		String lastPage = x.getAllPages().get(x.getAllPages().size() - 1);
-		System.out.println(lastPage);
-		System.out.println(lastPage);
+		// System.out.println(lastPage);
+		// System.out.println(lastPage);
 		path = "data/tables/" + strTableName + "/" + "pages/" + lastPage
 				+ ".class";
 		Page lastPageinTable = (Page) deserialize(path);
@@ -184,7 +177,7 @@ public class DBApp {
 		} else {
 			x.createPage(); // already added in the method to the array
 			lastPage = x.getAllPages().get(x.getAllPages().size() - 1);
-			System.out.println("New page created");
+			System.out.println("New page created HOHOHOHO");
 			path = "data/tables/" + strTableName + "/" + "pages/" + lastPage
 					+ ".class";
 			lastPageinTable = (Page) deserialize(path);
@@ -198,6 +191,22 @@ public class DBApp {
 		path = "data/tables/" + strTableName + "/" + "pages/" + lastPage
 				+ ".class";
 		serialize(path, lastPageinTable);
+		// indexing
+		ArrayList<String> Indexes = x.getIndexes();
+		for (int c = 0; c < Indexes.size(); c++) {
+			String index = Indexes.get(c);
+			String BTreePath = "data/tables/" + strTableName + "/" + "BTree/"
+					+ index + ".bin";
+			String LHTPath = "data/tables/" + strTableName + "/" + "hashtable/"
+					+ index + ".bin";
+			BTree B = (BTree) deserialize(BTreePath);
+			LinearHashtable L = (LinearHashtable) deserialize(LHTPath);
+			String value = htblColNameValue.get(index);
+			B.put(value, htblColNameValue);
+			L.put(value, htblColNameValue);
+			serialize(LHTPath, L);
+			serialize(BTreePath, B);
+		}
 
 	}
 

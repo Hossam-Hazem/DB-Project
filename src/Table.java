@@ -87,6 +87,9 @@ public class Table implements Serializable {
 	public ArrayList<String> getAllPages() {
 		return allPages;
 	}
+	public ArrayList<String> getIndexes() {
+		return Indexes;
+	}
 
 	public int getNameCounter() {
 		return nameCounter;
@@ -118,6 +121,9 @@ public class Table implements Serializable {
 
 	public void addPagetoArray(Page x) {
 		allPages.add(x.getPageName());
+	}
+	public void addIndextoArray(String x) {
+		Indexes.add(x);
 	}
 
 	public static void main(String[] args) throws IOException {
