@@ -28,7 +28,7 @@ public class DBApp {
 
 		try {
 			app.createTable("kareem", htblColNameType, htblColNameRefs, "col1");
-		} catch (DBAppException e) {
+		} catch (DBAppException | IOException e) {
 			e.printStackTrace();
 		}
 
@@ -42,26 +42,24 @@ public class DBApp {
 		}
 
 		// -----------------------------------------------------------------
-
+/*
 		try {
 
 			Table table = new Table("kareem");
 
-			table.createPage();
-			Page page = table.readPage(table.getPages().get(0));
+			//table.createPage();
 			Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
 			htblColNameValue.put("col1", "ana kareem");
-			page.addRecord(htblColNameValue);
-			ArrayList<Hashtable<String, String>> tmp = page.getRecords();
+			table.insertRow(htblColNameValue);
 
-			page.deleteRecord(htblColNameValue);
-			System.out.println(tmp.get(0).get("col1"));
+			//page.deleteRecord(htblColNameValue);
+			System.out.println("");
 
 		} catch (IOException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+*/
 		// -----------------------------------------------------------------
 
 	}
@@ -74,11 +72,13 @@ public class DBApp {
 	public void createTable(String strTableName,
 			Hashtable<String, String> htblColNameType,
 			Hashtable<String, String> htblColNameRefs, String strKeyColName)
-			throws DBAppException {
+			throws DBAppException, IOException {
 		// TODO Auto-generated method stub
 
 		File f = new File("data\\" + strTableName);
 		f.mkdir();
+		new Page("data\\" + strTableName + "/p0", "p0");
+		
 
 		String metaInfo = "";
 		Enumeration ColNames = htblColNameType.keys();

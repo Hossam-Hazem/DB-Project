@@ -52,18 +52,27 @@ public class Table {
 	public void createPage() throws IOException {
 		new Page(tablesDir + name + "/p" + nameCounter, "p" + nameCounter);
 		pages.add("p" + nameCounter + ".class");
+		lastPage = "p" + nameCounter + ".class";
 		nameCounter++;
 
 	}
-	
-	public void insertRow(Hashtable<String, String> htblColNameValue){
-		
+
+	public void insertRow(Hashtable<String, String> htblColNameValue)
+			throws ClassNotFoundException, IOException {
+		Page page = readPage(tablesDir + name + "/" + lastPage);
+		if (!page.isFull()) {
+			page.addRecord(htblColNameValue);
+		} else {
+			createPage();
+			page = readPage(tablesDir + name + "/" + lastPage);
+			page.addRecord(htblColNameValue);
+		}
 	}
 
 	public Page readPage(String pageName) throws IOException,
 			ClassNotFoundException {
 		ObjectInputStream is = new ObjectInputStream(new FileInputStream(
-				tablesDir + name + "\\" + pageName));
+				pageName));
 		return (Page) is.readObject();
 	}
 

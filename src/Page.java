@@ -25,7 +25,7 @@ public class Page implements Serializable {
 		rowsCounter = 0;
 		this.pageName = pageName;
 		this.pageDir = pageDir;
-		System.out.println(this.MaximumRowsCountinPage);
+		//System.out.println(this.MaximumRowsCountinPage);
 
 		// create page
 		writePage();
@@ -89,6 +89,7 @@ public class Page implements Serializable {
 	public void addRecord(Hashtable<String, String> htblColNameValue)
 			throws IOException {
 		records.add(htblColNameValue);
+		rowsCounter++;
 		writePage();
 	}
 
