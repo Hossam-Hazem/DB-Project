@@ -54,6 +54,7 @@ public class DBApp {
 			page.addRecord(htblColNameValue);
 			ArrayList<Hashtable<String, String>> tmp = page.getRecords();
 
+			page.deleteRecord(htblColNameValue);
 			System.out.println(tmp.get(0).get("col1"));
 
 		} catch (IOException | ClassNotFoundException e) {

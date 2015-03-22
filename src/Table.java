@@ -3,6 +3,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 
 public class Table {
@@ -53,6 +54,10 @@ public class Table {
 		pages.add("p" + nameCounter + ".class");
 		nameCounter++;
 
+	}
+	
+	public void insertRow(Hashtable<String, String> htblColNameValue){
+		
 	}
 
 	public Page readPage(String pageName) throws IOException,

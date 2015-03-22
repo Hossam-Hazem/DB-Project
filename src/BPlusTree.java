@@ -246,29 +246,5 @@ public class BPlusTree {
 		return null;
 	}
 
-	public static void main(String[] args) {
-		BPlusTree bPlusTree = new BPlusTree();
-		int primeNumbers[] = new int[] { 2, 3, 5, 7, 11, 13, 19, 23, 37, 41,
-				43, 47, 53, 59, 67, 71, 61, 73, 79, 89, 97, 101, 103, 109, 29,
-				31, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179,
-				17, 83, 107 };
 
-		for (int i = 0; i < primeNumbers.length; i++) {
-			bPlusTree.add(primeNumbers[i], String.valueOf(primeNumbers[i]));
-		}
-
-		for (int i = 0; i < primeNumbers.length; i++) {
-			String value = String.valueOf(primeNumbers[i]);
-			Object searchResult = (Object) bPlusTree.search(primeNumbers[i]);
-			if (!value.equals(searchResult)) {
-				System.out.println("Oops: Key " + primeNumbers[i]
-						+ " retrieved object " + searchResult);
-			}
-		}
-
-		System.out.println(bPlusTree.search(11));
-		System.out.println(bPlusTree.search(17));
-		System.out.println(bPlusTree.toString());
-		System.out.println(bPlusTree.toString(19, 71));
-	}
 }

@@ -171,3 +171,11 @@ kareem, col4, str, false, false, null
 kareem, col3, int, false, false, null
 kareem, col2, int, false, false, null
 kareem, col1, str, true, false, table1.id
+kareem, col4, str, false, false, null
+kareem, col3, int, false, false, null
+kareem, col2, int, false, false, null
+kareem, col1, str, true, false, table1.id
+kareem, col4, str, false, false, null
+kareem, col3, int, false, false, null
+kareem, col2, int, false, false, null
+kareem, col1, str, true, false, table1.id
