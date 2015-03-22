@@ -14,6 +14,7 @@ public class Table {
 	private String lastPage;
 	private int nameCounter;
 	private String tablesDir = "data\\";
+	private int MaximumRowsCountinPage = 200;
 
 	public Table(String n) throws IOException {
 		name = n;
@@ -42,7 +43,7 @@ public class Table {
 				}
 				nameCounter = Integer.parseInt(lastPage.substring(1).replace(
 						".class", ""));
-				nameCounter += 200;
+				nameCounter += MaximumRowsCountinPage;
 				pages = array;
 			}
 		}
@@ -50,7 +51,7 @@ public class Table {
 	}
 
 	public void createPage() throws IOException {
-		new Page(tablesDir + name + "/p" + nameCounter,"p" + nameCounter);
+		new Page(tablesDir + name + "/p" + nameCounter, "p" + nameCounter);
 		pages.add("p" + nameCounter + ".class");
 		nameCounter++;
 
@@ -101,6 +102,14 @@ public class Table {
 
 	public void setTablesDir(String tablesDir) {
 		this.tablesDir = tablesDir;
+	}
+
+	public int getMaximumRowsCountinPage() {
+		return MaximumRowsCountinPage;
+	}
+
+	public void setMaximumRowsCountinPage(int maximumRowsCountinPage) {
+		MaximumRowsCountinPage = maximumRowsCountinPage;
 	}
 
 }
