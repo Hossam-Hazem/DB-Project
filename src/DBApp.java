@@ -12,6 +12,7 @@ import java.util.Iterator;
 public class DBApp implements RequiredMethods {
 	public static void main(String[] args) {
 
+		// initialization of hash tables
 		Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
 		htblColNameType.put("col1", "str");
 		htblColNameType.put("col2", "int");
@@ -23,11 +24,15 @@ public class DBApp implements RequiredMethods {
 
 		DBApp app = new DBApp();
 
+		// -----------------------------------------------------------------
+
 		try {
 			app.createTable("kareem", htblColNameType, htblColNameRefs, "col1");
 		} catch (DBAppException e) {
 			e.printStackTrace();
 		}
+
+		// -----------------------------------------------------------------
 
 		try {
 			app.createIndex("kareem", "col2");
@@ -36,20 +41,27 @@ public class DBApp implements RequiredMethods {
 			e.printStackTrace();
 		}
 
+		// -----------------------------------------------------------------
+
 		try {
+
 			Table table = new Table("kareem");
+			
 			table.createPage();
 			Page page = table.readPage(table.getPages().get(0));
 			Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
-			htblColNameValue.put("col1", "ana kareem 1");
+			htblColNameValue.put("col1", "ana kareem");
 			page.addRecord(htblColNameValue);
 			ArrayList<Hashtable<String, String>> tmp = page.getRecords();
 			System.out.println(tmp.get(0).get("col1"));
+
 		} catch (IOException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// table.readPage(pageName);
+
+		// -----------------------------------------------------------------
+
 	}
 
 	@Override
