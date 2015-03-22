@@ -4,12 +4,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 
 public class DBApp implements RequiredMethods {
 	public static void main(String[] args) {
+
 		Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
 		htblColNameType.put("col1", "str");
 		htblColNameType.put("col2", "int");
@@ -34,6 +36,20 @@ public class DBApp implements RequiredMethods {
 			e.printStackTrace();
 		}
 
+		try {
+			Table table = new Table("kareem");
+			table.createPage();
+			Page page = table.readPage(table.getPages().get(0));
+			Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
+			htblColNameValue.put("col1", "ana kareem 1");
+			page.addRecord(htblColNameValue);
+			ArrayList<Hashtable<String, String>> tmp = page.getRecords();
+			System.out.println(tmp.get(0).get("col1"));
+		} catch (IOException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// table.readPage(pageName);
 	}
 
 	@Override
@@ -49,8 +65,10 @@ public class DBApp implements RequiredMethods {
 			throws DBAppException {
 		// TODO Auto-generated method stub
 
+		File f = new File("data\\" + strTableName);
+		f.mkdir();
+
 		String metaInfo = "";
-		
 		Enumeration ColNames = htblColNameType.keys();
 		while (ColNames.hasMoreElements()) {
 			String ColName = (String) ColNames.nextElement();

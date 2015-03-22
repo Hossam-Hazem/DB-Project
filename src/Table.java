@@ -13,7 +13,7 @@ public class Table {
 	private ArrayList<String> pages = new ArrayList<>();
 	private String lastPage;
 	private int nameCounter;
-	private String tablesDir = "/data/";
+	private String tablesDir = "data\\";
 
 	public Table(String n) throws IOException {
 		name = n;
@@ -28,40 +28,37 @@ public class Table {
 					array.add(file.getName());
 				}
 			}
-
-			// get last page
-			lastPage = array.get(0);
-			Iterator itr = array.iterator();
-			while (itr.hasNext()) {
-				String page = (String) itr.next();
-				if (Integer.parseInt(page.substring(1)) > Integer
-						.parseInt(lastPage.substring(1))) {
-					lastPage = page;
+			if (array.size() > 0) {
+				// get last page
+				lastPage = array.get(0);
+				Iterator itr = array.iterator();
+				while (itr.hasNext()) {
+					String page = (String) itr.next();
+					if (Integer.parseInt(page.substring(1).replace(".class", "")) > Integer
+							.parseInt(lastPage.substring(1).replace(".class", ""))) {
+						lastPage = page;
+					}
 				}
+				nameCounter = Integer.parseInt(lastPage.substring(1).replace(".class", ""));
+				pages = array;
 			}
-			nameCounter = Integer.parseInt(lastPage.substring(0));
 		}
 
 	}
 
-	public void insertIntoTable(String strTableName,
-			Hashtable<String, String> htblColNameValue) throws DBAppException {
-
-		//
-	}
-
 	public void createPage() throws IOException {
 		new Page(tablesDir + name + "/p" + nameCounter);
-		pages.add("p" + nameCounter);
+		pages.add("p" + nameCounter + ".class");
 		nameCounter++;
 
 	}
-	
-	public Page readPage(String pageName) throws IOException, ClassNotFoundException {
-		ObjectInputStream is = new ObjectInputStream(new FileInputStream(tablesDir + name + pageName));
-        return (Page)is.readObject();
+
+	public Page readPage(String pageName) throws IOException,
+			ClassNotFoundException {
+		ObjectInputStream is = new ObjectInputStream(new FileInputStream(
+				tablesDir + name + "\\" + pageName));
+		return (Page) is.readObject();
 	}
-	
 
 	public String getName() {
 		return name;
