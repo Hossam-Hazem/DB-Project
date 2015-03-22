@@ -1,5 +1,8 @@
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -36,6 +39,7 @@ public class Table {
 					lastPage = page;
 				}
 			}
+			nameCounter = Integer.parseInt(lastPage.substring(0));
 		}
 
 	}
@@ -52,6 +56,12 @@ public class Table {
 		nameCounter++;
 
 	}
+	
+	public Page readPage(String pageName) throws IOException, ClassNotFoundException {
+		ObjectInputStream is = new ObjectInputStream(new FileInputStream(tablesDir + name + pageName));
+        return (Page)is.readObject();
+	}
+	
 
 	public String getName() {
 		return name;
