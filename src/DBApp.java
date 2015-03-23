@@ -53,9 +53,13 @@ public class DBApp {
 			}
 			br.close();
 			fileWriter.close();
+			new Table(strTableName);
 		}
-		//makeTable(strTableName);
-		new Table(strTableName);
+		else{
+			System.out.println("Table already Exists");
+		}
+		
+		
 	}
 
 	
