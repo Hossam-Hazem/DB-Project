@@ -136,8 +136,8 @@ public class DBApp {
 			for (int j = 0; j < P.getRowsCounter(); j++) {
 				Hashtable<String, String> r = AllRecords.get(j);
 				String c = r.get(strColName);
-				B.put(c, r);
-				L.put(c, r);
+				B.put(c, Pagepath);
+				L.put(c, Pagepath);
 			}
 
 		}
@@ -156,6 +156,7 @@ public class DBApp {
 	public static void insertIntoTable(String strTableName,
 			Hashtable<String, String> htblColNameValue) throws DBAppException,
 			ClassNotFoundException, IOException {
+		String currentPagepath;
 		String path = "data/tables/" + strTableName + "/" + strTableName
 				+ ".bin";
 		Table x = (Table) deserialize(path);
@@ -186,6 +187,7 @@ public class DBApp {
 					.setRowsCounter(lastPageinTable.getRowsCounter() + 1);
 
 		}
+		currentPagepath=path;
 		path = "data/tables/" + strTableName + "/" + strTableName + ".bin";
 		serialize(path, x);
 		path = "data/tables/" + strTableName + "/" + "pages/" + lastPage
@@ -202,8 +204,8 @@ public class DBApp {
 			BTree B = (BTree) deserialize(BTreePath);
 			LinearHashtable L = (LinearHashtable) deserialize(LHTPath);
 			String value = htblColNameValue.get(index);
-			B.put(value, htblColNameValue);
-			L.put(value, htblColNameValue);
+			B.put(value, currentPagepath);
+			L.put(value, currentPagepath);
 			serialize(LHTPath, L);
 			serialize(BTreePath, B);
 		}
