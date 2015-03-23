@@ -18,10 +18,10 @@ public class Table implements Serializable {
 		this.tableName = name;
 		this.nameCounter = 0;
 		pagesDirectory = "data/tables/" + tableName + "/pages";
-		makeTable();
+		makeTableFolders();
 	}
 	
-	private void makeTable() throws IOException {
+	private void makeTableFolders() throws IOException {
 		String path = "data/tables/" + tableName + "/" + tableName
 				+ ".bin";
 		// make folder containing all table info
@@ -44,11 +44,7 @@ public class Table implements Serializable {
 		if (!saveDir.exists()) {
 			saveDir.mkdirs();
 		}
-		/*
-		 * FileOutputStream fs = new FileOutputStream(path); ObjectOutputStream
-		 * os = new ObjectOutputStream(fs); os.writeObject(x); os.close();
-		 * fs.close();
-		 */
+		
 		serialize(path, this);
 	}
 	/*
@@ -108,6 +104,10 @@ public class Table implements Serializable {
 
 	public void addPagetoArray(Page x) {
 		allPages.add(x.getPageName());
+	}
+	
+	public String getLastPagePath(){
+		return (pagesDirectory+"/"+allPages.get(allPages.size()-1)+".class");
 	}
 	
 	public static void serialize(String path, Object x) throws IOException {

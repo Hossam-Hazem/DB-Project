@@ -122,11 +122,8 @@ public class DBApp {
 			System.out.println("First page intialized");
 		}
 
-		String lastPage = x.getAllPages().get(x.getAllPages().size() - 1);
-		System.out.println(lastPage);
-		System.out.println(lastPage);
-		path = "data/tables/" + strTableName + "/" + "pages/" + lastPage
-				+ ".class";
+		path = x.getLastPagePath();
+
 		Page lastPageinTable = (Page) deserialize(path);
 		if (!lastPageinTable.isFull()) {
 			lastPageinTable.addRecord(htblColNameValue);
@@ -134,10 +131,8 @@ public class DBApp {
 					.setRowsCounter(lastPageinTable.getRowsCounter() + 1);
 		} else {
 			x.createPage(); // already added in the method to the array
-			lastPage = x.getAllPages().get(x.getAllPages().size() - 1);
 			System.out.println("New page created");
-			path = "data/tables/" + strTableName + "/" + "pages/" + lastPage
-					+ ".class";
+			path = x.getLastPagePath();
 			lastPageinTable = (Page) deserialize(path);
 			lastPageinTable.addRecord(htblColNameValue);
 			lastPageinTable
@@ -146,8 +141,7 @@ public class DBApp {
 		}
 		path = "data/tables/" + strTableName + "/" + strTableName + ".bin";
 		serialize(path, x);
-		path = "data/tables/" + strTableName + "/" + "pages/" + lastPage
-				+ ".class";
+		path = x.getLastPagePath();
 		serialize(path, lastPageinTable);
 
 	}
@@ -207,24 +201,24 @@ public class DBApp {
 		 * os.close(); fi.close();
 		 */
 		/*
-		 * for (int i = 0; i < 200; i++) { Hashtable<String, String> insertion =
-		 * new Hashtable<String, String>(); insertion.put("col1", "str");
-		 * insertion.put("col2", "int"); insertion.put("col3", "int");
-		 * insertion.put("col4", "str");
-		 * 
-		 * insertIntoTable("testAll2", insertion); }
+		  for (int i = 0; i < 200; i++) { Hashtable<String, String> insertion =
+		  new Hashtable<String, String>(); insertion.put("col1", "str");
+		  insertion.put("col2", "int"); insertion.put("col3", "int");
+		  insertion.put("col4", "str");
+		  
+		  insertIntoTable("testAll6", insertion); }
 		 */
-
+/*
 		Hashtable<String, String> insertion = new Hashtable<String, String>();
 		insertion.put("col1", "str");
 		insertion.put("col2", "int");
 		insertion.put("col3", "int");
-		insertion.put("col4", "str");
+		insertion.put("col4", "test");
 
 		insertIntoTable("testAll6", insertion);
-
-		// Page x = (Page)deserialize("data/testAll/0.class");
-		// System.out.println(x.getRecords());
+*/
+		 //Page x = (Page)deserialize("data/tables/testAll6/pages/0.class");
+		 //System.out.println(x.getRecords());
 
 		// --------------------------------------------------------------------
 
