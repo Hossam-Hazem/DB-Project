@@ -54,40 +54,11 @@ public class DBApp {
 			br.close();
 			fileWriter.close();
 		}
-		makeTable(strTableName);
+		//makeTable(strTableName);
+		new Table(strTableName);
 	}
 
-	private static void makeTable(String strTableName) throws IOException {
-		Table x = new Table(strTableName);
-		String path = "data/tables/" + strTableName + "/" + strTableName
-				+ ".bin";
-		// make folder containing all table info
-		File saveDir = new File("data/tables");
-		if (!saveDir.exists()) {
-			saveDir.mkdirs();
-		}
-		// make pages directory inside table folder
-		saveDir = new File("data/tables/" + strTableName + "/" + "pages");
-		if (!saveDir.exists()) {
-			saveDir.mkdirs();
-		}
-		// make hashtable directory inside table folder
-		saveDir = new File("data/tables/" + strTableName + "/" + "hashtable");
-		if (!saveDir.exists()) {
-			saveDir.mkdirs();
-		}
-		// make BTree directory inside table folder
-		saveDir = new File("data/tables/" + strTableName + "/" + "BTree");
-		if (!saveDir.exists()) {
-			saveDir.mkdirs();
-		}
-		/*
-		 * FileOutputStream fs = new FileOutputStream(path); ObjectOutputStream
-		 * os = new ObjectOutputStream(fs); os.writeObject(x); os.close();
-		 * fs.close();
-		 */
-		serialize(path, x);
-	}
+	
 
 	public static boolean alreadyExist(String strTableName) throws IOException {
 		boolean found = false;
@@ -148,7 +119,8 @@ public class DBApp {
 		}
 
 		String lastPage = x.getAllPages().get(x.getAllPages().size() - 1);
-		
+		System.out.println(lastPage);
+		System.out.println(lastPage);
 		path = "data/tables/" + strTableName + "/" + "pages/" + lastPage
 				+ ".class";
 		Page lastPageinTable = (Page) deserialize(path);
@@ -204,15 +176,15 @@ public class DBApp {
 	public static void main(String[] args) throws IOException, DBAppException,
 			ClassNotFoundException {
 		/*
-		  Hashtable<String, String> htblColNameType = new Hashtable<String,
-		  String>(); htblColNameType.put("col1", "str");
-		  htblColNameType.put("col2", "int"); htblColNameType.put("col3",
-		  "int"); htblColNameType.put("col4", "str");
-		  
-		  Hashtable<String, String> htblColNameRefs = new Hashtable<String,
-		  String>(); htblColNameRefs.put("col1", "table1.id");
-		  
-		  createTable("testAll6", htblColNameType, htblColNameRefs, "col2");
+		 * Hashtable<String, String> htblColNameType = new Hashtable<String,
+		 * String>(); htblColNameType.put("col1", "str");
+		 * htblColNameType.put("col2", "int"); htblColNameType.put("col3",
+		 * "int"); htblColNameType.put("col4", "str");
+		 * 
+		 * Hashtable<String, String> htblColNameRefs = new Hashtable<String,
+		 * String>(); htblColNameRefs.put("col1", "table1.id");
+		 * 
+		 * createTable("testAll6", htblColNameType, htblColNameRefs, "col2");
 		 */
 		// createIndex("testAll", "col3");
 
@@ -231,14 +203,14 @@ public class DBApp {
 		 * os.close(); fi.close();
 		 */
 		/*
-		  for (int i = 0; i < 200; i++) { Hashtable<String, String> insertion =
-		  new Hashtable<String, String>(); insertion.put("col1", "str");
-		  insertion.put("col2", "int"); insertion.put("col3", "int");
-		  insertion.put("col4", "str");
-		  
-		  insertIntoTable("testAll6", insertion); }
+		 * for (int i = 0; i < 200; i++) { Hashtable<String, String> insertion =
+		 * new Hashtable<String, String>(); insertion.put("col1", "str");
+		 * insertion.put("col2", "int"); insertion.put("col3", "int");
+		 * insertion.put("col4", "str");
+		 * 
+		 * insertIntoTable("testAll2", insertion); }
 		 */
-/*
+
 		Hashtable<String, String> insertion = new Hashtable<String, String>();
 		insertion.put("col1", "str");
 		insertion.put("col2", "int");
@@ -246,11 +218,9 @@ public class DBApp {
 		insertion.put("col4", "str");
 
 		insertIntoTable("testAll6", insertion);
-*/
-		/*
-		Page x = (Page)deserialize("data/tables/testAll6/pages/0.class");
-		System.out.println(x.getRecords());
-		*/
+
+		// Page x = (Page)deserialize("data/testAll/0.class");
+		// System.out.println(x.getRecords());
 
 		// --------------------------------------------------------------------
 

@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -17,8 +18,39 @@ public class Table implements Serializable {
 		this.tableName = name;
 		this.nameCounter = 0;
 		pagesDirectory = "data/tables/" + tableName + "/pages";
+		makeTable();
 	}
-
+	
+	private void makeTable() throws IOException {
+		String path = "data/tables/" + tableName + "/" + tableName
+				+ ".bin";
+		// make folder containing all table info
+		File saveDir = new File("data/tables");
+		if (!saveDir.exists()) {
+			saveDir.mkdirs();
+		}
+		// make pages directory inside table folder
+		saveDir = new File("data/tables/" + tableName + "/" + "pages");
+		if (!saveDir.exists()) {
+			saveDir.mkdirs();
+		}
+		// make hashtable directory inside table folder
+		saveDir = new File("data/tables/" + tableName + "/" + "hashtable");
+		if (!saveDir.exists()) {
+			saveDir.mkdirs();
+		}
+		// make BTree directory inside table folder
+		saveDir = new File("data/tables/" + tableName + "/" + "BTree");
+		if (!saveDir.exists()) {
+			saveDir.mkdirs();
+		}
+		/*
+		 * FileOutputStream fs = new FileOutputStream(path); ObjectOutputStream
+		 * os = new ObjectOutputStream(fs); os.writeObject(x); os.close();
+		 * fs.close();
+		 */
+		serialize(path, this);
+	}
 	/*
 	 * public void createPage() throws IOException { Page x = new
 	 * Page(tableName, "" + pagesNames.size()); File saveDir = new File("data/"
@@ -77,7 +109,15 @@ public class Table implements Serializable {
 	public void addPagetoArray(Page x) {
 		allPages.add(x.getPageName());
 	}
-
+	
+	public static void serialize(String path, Object x) throws IOException {
+		FileOutputStream fs = new FileOutputStream(path);
+		ObjectOutputStream os = new ObjectOutputStream(fs);
+		os.writeObject(x);
+		os.close();
+		fs.close();
+	}
+	
 	public static void main(String[] args) throws IOException {
 		new Table("Test2");
 	}
