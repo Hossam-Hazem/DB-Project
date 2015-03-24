@@ -213,7 +213,7 @@ public class DBApp {
 
 	}
 
-	public void deleteFromTable(String strTableName,
+	public static void deleteFromTable(String strTableName,
 			Hashtable<String, String> htblColNameValue, String strOperator)
 			throws DBEngineException, ClassNotFoundException, IOException {
 		 Iterator I = selectValueFromTable(strTableName,htblColNameValue,strOperator);
@@ -450,6 +450,7 @@ public class DBApp {
 		insertion.put("col4", "str");
 
 		insertIntoTable("testAll6", insertion);*/
+		/*
 		Hashtable<String, String> htblColNameType = new Hashtable<String,
 				  String>(); 
 				  htblColNameType.put("name", "str");
@@ -498,11 +499,58 @@ public class DBApp {
 					c++;
 				}
 				System.out.println(c);
-
+*/
 		// Page x = (Page)deserialize("data/testAll/0.class");
 		// System.out.println(x.getRecords());
 
 		// --------------------------------------------------------------------
+		//delete test
+		Hashtable<String, String> htblColNameType = new Hashtable<String,
+				  String>(); 
+				  htblColNameType.put("name", "str");
+				  htblColNameType.put("age", "int"); 
+				  htblColNameType.put("ID","int"); 
+				  htblColNameType.put("major", "str");
+				  
+				  Hashtable<String, String> htblColNameRefs = new Hashtable<String,
+				  String>();
+				  
+				  createTable("testDelete", htblColNameType, htblColNameRefs, "ID");
+				 
+				Hashtable<String, String> insertion = new Hashtable<String, String>();
+				insertion.put("name", "omar");
+				insertion.put("age", "2");
+				insertion.put("ID", "10999");
+				insertion.put("major", "cs");
+				
+				insertIntoTable("testDelete", insertion);
+				
+				
+				insertion = new Hashtable<String, String>();
+				insertion.put("name", "hossam");
+				insertion.put("age", "3");
+				insertion.put("ID", "286205");
+				insertion.put("major", "cs");
+				
+				insertIntoTable("testDelete", insertion);
+				
+				
+				Page p = (Page)deserialize("data/tables/testDelete/Pages/0.class");
+				System.out.println("All Records: " + p.getRecords());
+				
+				BTree x = (BTree)deserialize("data/tables/testDelete/BTree/ID.bin");
+				x.print();
+				
+				Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
+				htblColNameValue.put("ID", "10999");
+				//htblColNameValue.put("name", "hossam");
+				deleteFromTable("testDelete", htblColNameValue, "OR");
+				
+				 p = (Page)deserialize("data/tables/testDelete/Pages/0.class");
+				System.out.println("All Records: " + p.getRecords());
+				
+				 x = (BTree)deserialize("data/tables/testDelete/BTree/ID.bin");
+				x.print();
 
 	}
 }
