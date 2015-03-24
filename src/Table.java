@@ -11,6 +11,7 @@ public class Table implements Serializable {
 	private String pagesDirectory;
 	private String tablePath;
 	private String tableName;
+	private String lastPage;
 
 	private static final long serialVersionUID = 1928828356132285922L;
 
@@ -46,17 +47,15 @@ public class Table implements Serializable {
 		if (pages.size() > 0) {
 			String lastPage = pages.get(0);
 			for (int i = 0; i < pages.size(); i++) {
-
 				if (Integer.parseInt(pages.get(i).substring(0)
 						.replace(".class", "")) > Integer.parseInt(lastPage
 						.substring(0).replace(".class", ""))) {
 					lastPage = pages.get(i);
 				}
-
-				nameCounter = Integer.parseInt(lastPage.substring(0).replace(
-						".class", ""));
-				nameCounter += Page.getPageSize();
 			}
+			nameCounter = Integer.parseInt(lastPage.substring(0).replace(
+					".class", ""));
+			nameCounter += Page.getPageSize();
 
 		}
 		return nameCounter;
@@ -148,17 +147,24 @@ public class Table implements Serializable {
 	}
 
 	public String getLastPagePath() {
-		return (pagesDirectory + "/" + allPages.get(allPages.size() - 1));
+		// return (pagesDirectory + "/" + allPages.get(allPages.size() - 1));
+		return (pagesDirectory + "/" + getLastPage());
+
 	}
-/*
-	public static void serialize(String path, Object x) throws IOException {
-		FileOutputStream fs = new FileOutputStream(path);
-		ObjectOutputStream os = new ObjectOutputStream(fs);
-		os.writeObject(x);
-		os.close();
-		fs.close();
+
+	public String getLastPage() {
+		return lastPage;
 	}
-*/
+
+	public void setLastPage(String lastPage) {
+		this.lastPage = lastPage;
+	}
+
+	/*
+	 * public static void serialize(String path, Object x) throws IOException {
+	 * FileOutputStream fs = new FileOutputStream(path); ObjectOutputStream os =
+	 * new ObjectOutputStream(fs); os.writeObject(x); os.close(); fs.close(); }
+	 */
 	public static void main(String[] args) throws IOException {
 		new Table("Test2");
 	}
