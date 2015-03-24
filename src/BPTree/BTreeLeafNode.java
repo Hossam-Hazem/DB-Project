@@ -189,5 +189,11 @@ public class BTreeLeafNode<TKey extends Comparable<TKey>, TValue> extends BTreeN
     public BTreeLeafNode getSmallest() {
         return this;
     }
+    
+    public static void main(String[] args) {
+    	 
+    	 
+	}
+   
 
 }
