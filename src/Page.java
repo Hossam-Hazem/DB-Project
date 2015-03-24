@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Properties;
 
 //metadata.csv
@@ -83,5 +84,24 @@ public class Page implements Serializable{
 		records.add(htblColNameValue);
 	//	rowsCounter++;
 		
+	}
+	public int getrecordPlace(Hashtable<String, String> x){
+		for(int c = 0;c<x.size();c++){
+			if(records.get(c)==x)
+				return c;
+			
+		}
+		 return -1;
+	}
+	public Hashtable<String, String> getRecord(String ColumnName,String ColumnValue){
+		Iterator i = records.iterator();
+		Hashtable<String, String> x;
+		while(i.hasNext()){
+			 x=(Hashtable<String, String>) i.next();
+			if(x.get(ColumnName).equals(ColumnValue)){
+				return x;
+			}
+		}
+		return null;
 	}
 }

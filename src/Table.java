@@ -20,6 +20,7 @@ public class Table implements Serializable {
 
 	public Table(String name,String PrimaryKey) throws IOException {
 		this.allPages = new ArrayList<String>();
+		this.Indexes = new ArrayList<String>();
 		this.tableName = name;
 		this.nameCounter = 0;
 		Indexes.add(PrimaryKey);
