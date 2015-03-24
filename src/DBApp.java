@@ -217,6 +217,7 @@ public class DBApp {
 			throws DBEngineException {
 
 	}
+	
 	public static Iterator selectValueFromTable(String strTable,
 			Hashtable<String, String> htblColNameValue, String strOperator)
 			throws DBEngineException, ClassNotFoundException, IOException {
@@ -261,7 +262,7 @@ public class DBApp {
 						for (int i = 0; i < allRecordsInPage.size(); i++) {
 							if(allRecordsInPage.get(i).get(ColumnName).equals(ColumnValue)){
 								result.add(allRecordsInPage.get(i));
-								//System.out.println("while in OR works");
+								System.out.println("while in OR works");
 							}
 						}
 						/*
@@ -316,7 +317,7 @@ public class DBApp {
 							for (int i = 0; i < allRecordsInPage.size(); i++) {
 								if(allRecordsInPage.get(i).get(ColumnName).equals(ColumnValue)){
 									result.add(allRecordsInPage.get(i));
-									//System.out.println("while in OR works");
+									System.out.println("while in OR works");
 								}
 							}
 							/*
@@ -333,8 +334,10 @@ public class DBApp {
 				} else { // low flag mesh be false i.e. mesh 2wl iteration
 							// 3lshan yeloop 3ala result mesh database 3lshan
 							// AND kan nefse 23mlha recursion <3
-					//Causes error with test 001
-					Iterator ResultI=result.iterator();
+					
+					ArrayList temp = new ArrayList();
+					temp = (ArrayList) result.clone();
+					Iterator ResultI=temp.iterator();
 					while(ResultI.hasNext()){
 						Hashtable<String, String> Record = (Hashtable<String, String>) ResultI.next();
 						if(!Record.get(ColumnName).equals(ColumnValue))
@@ -353,6 +356,7 @@ public class DBApp {
 		return null;
 
 	}
+	
 	public Iterator selectRangeFromTable(String strTable,
 			Hashtable<String,String> htblColNameRange,
 			String strOperator)
