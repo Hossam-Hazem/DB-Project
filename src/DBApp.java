@@ -236,7 +236,11 @@ public class DBApp {
 			 p.removeRecord(PrimaryKeyColumn, PrimaryKeyValue);
 			 L.delete(PrimaryKeyValue);
 			 B.delete(PrimaryKeyValue);
+			 serialize(RPath, p);
+			 serialize(LHTPath, L);
+			 serialize(BTreePath, B);
 		 }
+		 
 		 
 	}
 	
@@ -542,7 +546,7 @@ public class DBApp {
 				x.print();
 				
 				Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
-				htblColNameValue.put("ID", "10999");
+				htblColNameValue.put("ID", "286205");
 				//htblColNameValue.put("name", "hossam");
 				deleteFromTable("testDelete", htblColNameValue, "OR");
 				
