@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -214,8 +215,16 @@ public class DBApp {
 
 	public void deleteFromTable(String strTableName,
 			Hashtable<String, String> htblColNameValue, String strOperator)
-			throws DBEngineException {
-
+			throws DBEngineException, ClassNotFoundException, IOException {
+		 Iterator I = selectValueFromTable(strTableName,htblColNameValue,strOperator);
+		 String Tpath = "data/tables/" + strTableName + "/" + strTableName + ".bin";
+		 Table T = (Table)deserialize(Tpath);
+		 ArrayList<String> indices = T.getIndexes();
+		 while(I.hasNext()){
+			 Hashtable<String, String> r = (Hashtable<String, String>) I.next();
+			 
+		 }
+		 
 	}
 	
 	public static Iterator selectValueFromTable(String strTable,
