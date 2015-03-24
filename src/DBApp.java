@@ -173,7 +173,7 @@ public class DBApp {
 
 	public static void main(String[] args) throws IOException, DBAppException,
 			ClassNotFoundException {
-		/*
+		
 		  Hashtable<String, String> htblColNameType = new Hashtable<String,
 		  String>(); htblColNameType.put("col1", "str");
 		  htblColNameType.put("col2", "int"); htblColNameType.put("col3",
@@ -183,7 +183,7 @@ public class DBApp {
 		  String>(); htblColNameRefs.put("col1", "table1.id");
 		 
 		 createTable("testAll6", htblColNameType, htblColNameRefs, "col2");
-		 */
+		 
 		// createIndex("testAll", "col3");
 
 		// Clean csv file

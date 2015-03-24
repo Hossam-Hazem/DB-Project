@@ -45,7 +45,7 @@ public class Table implements Serializable {
 	public int getNameCounter(ArrayList<String> pages) throws IOException {
 		int nameCounter = 0;
 		if (pages.size() > 0) {
-			String lastPage = pages.get(0);
+			lastPage = pages.get(0);
 			for (int i = 0; i < pages.size(); i++) {
 				if (Integer.parseInt(pages.get(i).substring(0)
 						.replace(".class", "")) > Integer.parseInt(lastPage
@@ -55,8 +55,7 @@ public class Table implements Serializable {
 			}
 			nameCounter = Integer.parseInt(lastPage.substring(0).replace(
 					".class", ""));
-			nameCounter += Page.getPageSize();
-
+			nameCounter++;
 		}
 		return nameCounter;
 	}
@@ -106,6 +105,7 @@ public class Table implements Serializable {
 		os.close();
 		fs.close();
 		allPages.add("" + nameCounter);
+		lastPage = "" + nameCounter + ".class";
 		nameCounter++;
 
 	}
