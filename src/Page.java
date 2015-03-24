@@ -104,4 +104,16 @@ public class Page implements Serializable{
 		}
 		return null;
 	}
+public boolean removeRecord(String ColumnName,String ColumnValue){
+		
+		Iterator i = ((ArrayList<Hashtable<String, String>>) records.clone()).iterator();
+		Hashtable<String, String> x;
+		while(i.hasNext()){
+			 x=(Hashtable<String, String>) i.next();
+			if(x.get(ColumnName).equals(ColumnValue)){
+				return records.remove(x);
+			}
+		}
+		return false;
+	}
 }

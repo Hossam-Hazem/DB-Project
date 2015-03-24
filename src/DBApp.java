@@ -219,10 +219,23 @@ public class DBApp {
 		 Iterator I = selectValueFromTable(strTableName,htblColNameValue,strOperator);
 		 String Tpath = "data/tables/" + strTableName + "/" + strTableName + ".bin";
 		 Table T = (Table)deserialize(Tpath);
+		 String PrimaryKeyColumn=T.getIndexes().get(0);
+		 String BTreePath = "data/tables/" + strTableName + "/" + "BTree/"
+					+ PrimaryKeyColumn + ".bin";
+			String LHTPath = "data/tables/" + strTableName + "/" + "hashtable/"
+					+ PrimaryKeyColumn  + ".bin";
+			BTree B = (BTree) deserialize(BTreePath);
+			LinearHashtable L = (LinearHashtable) deserialize(LHTPath);
+		
 		 ArrayList<String> indices = T.getIndexes();
 		 while(I.hasNext()){
 			 Hashtable<String, String> r = (Hashtable<String, String>) I.next();
-			 
+			 String PrimaryKeyValue = r.get(PrimaryKeyColumn);
+			 String RPath = (String) L.get(PrimaryKeyValue);
+			 Page p = (Page) deserialize(RPath);
+			 p.removeRecord(PrimaryKeyColumn, PrimaryKeyValue);
+			 L.delete(PrimaryKeyValue);
+			 B.delete(PrimaryKeyValue);
 		 }
 		 
 	}
