@@ -116,7 +116,7 @@ public class DBApp {
 			ClassNotFoundException, IOException {
 		String path = "data/tables/" + strTableName + "/" + strTableName
 				+ ".bin";
-		Table x = (Table) deserialize(path);
+		Table x = new Table(strTableName);
 		if (x.getAllPages().size() == 0) {
 			x.createPage();
 			System.out.println("First page intialized");
@@ -140,7 +140,7 @@ public class DBApp {
 
 		}
 		path = "data/tables/" + strTableName + "/" + strTableName + ".bin";
-		serialize(path, x);
+		//serialize(path, x);
 		path = x.getLastPagePath();
 		serialize(path, lastPageinTable);
 
@@ -174,15 +174,15 @@ public class DBApp {
 	public static void main(String[] args) throws IOException, DBAppException,
 			ClassNotFoundException {
 		/*
-		 * Hashtable<String, String> htblColNameType = new Hashtable<String,
-		 * String>(); htblColNameType.put("col1", "str");
-		 * htblColNameType.put("col2", "int"); htblColNameType.put("col3",
-		 * "int"); htblColNameType.put("col4", "str");
-		 * 
-		 * Hashtable<String, String> htblColNameRefs = new Hashtable<String,
-		 * String>(); htblColNameRefs.put("col1", "table1.id");
-		 * 
-		 * createTable("testAll6", htblColNameType, htblColNameRefs, "col2");
+		  Hashtable<String, String> htblColNameType = new Hashtable<String,
+		  String>(); htblColNameType.put("col1", "str");
+		  htblColNameType.put("col2", "int"); htblColNameType.put("col3",
+		 "int"); htblColNameType.put("col4", "str");
+		 
+		  Hashtable<String, String> htblColNameRefs = new Hashtable<String,
+		  String>(); htblColNameRefs.put("col1", "table1.id");
+		 
+		 createTable("testAll6", htblColNameType, htblColNameRefs, "col2");
 		 */
 		// createIndex("testAll", "col3");
 
@@ -208,7 +208,7 @@ public class DBApp {
 		  
 		  insertIntoTable("testAll6", insertion); }
 		 */
-/*
+
 		Hashtable<String, String> insertion = new Hashtable<String, String>();
 		insertion.put("col1", "str");
 		insertion.put("col2", "int");
@@ -216,7 +216,7 @@ public class DBApp {
 		insertion.put("col4", "test");
 
 		insertIntoTable("testAll6", insertion);
-*/
+
 		 //Page x = (Page)deserialize("data/tables/testAll6/pages/0.class");
 		 //System.out.println(x.getRecords());
 

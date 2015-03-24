@@ -22,7 +22,7 @@ public class Page implements Serializable{
 		System.out.println(this.MaximumRowsCountinPage);
 	}
 	
-	public int getPageSize() throws IOException{
+	public static int getPageSize() throws IOException{
 		InputStream input = new FileInputStream("config/DBApp.properties");
 		Properties prop = new Properties();
 		prop.load(input);
