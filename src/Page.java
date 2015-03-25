@@ -101,6 +101,7 @@ public class Page implements Serializable {
 		}
 		return null;
 	}
+
 	public ArrayList<Hashtable<String, String>> getRecords(String ColumnName,
 			String ColumnValue) {
 		ArrayList res = new ArrayList();
@@ -114,33 +115,34 @@ public class Page implements Serializable {
 		}
 		return res;
 	}
-	public ArrayList<Hashtable<String, String>> getRecordLessthan(String ColumnName,
-			String ColumnValue) {
+
+	public ArrayList<Hashtable<String, String>> getRecordLessthan(
+			String ColumnName, String ColumnValue) {
 		ArrayList res = new ArrayList();
 		Iterator i = records.iterator();
 		Hashtable<String, String> x;
 		while (i.hasNext()) {
 			x = (Hashtable<String, String>) i.next();
-			if (x.get(ColumnName).compareTo(ColumnValue)<0) {
+			if (x.get(ColumnName).compareTo(ColumnValue) < 0) {
 				res.add(x);
 			}
 		}
 		return res;
 	}
-	public ArrayList<Hashtable<String, String>>getRecordbiggerthan(String ColumnName,
-			String ColumnValue) {
+
+	public ArrayList<Hashtable<String, String>> getRecordbiggerthan(
+			String ColumnName, String ColumnValue) {
 		ArrayList res = new ArrayList();
 		Iterator i = records.iterator();
 		Hashtable<String, String> x;
 		while (i.hasNext()) {
 			x = (Hashtable<String, String>) i.next();
-			if (x.get(ColumnName).compareTo(ColumnValue)>0) {
+			if (x.get(ColumnName).compareTo(ColumnValue) > 0) {
 				res.add(x);
 			}
 		}
 		return res;
 	}
-	
 
 	public boolean removeRecord(String ColumnName, String ColumnValue) {
 

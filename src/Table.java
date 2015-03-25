@@ -18,7 +18,7 @@ public class Table implements Serializable {
 
 	private static final long serialVersionUID = 1928828356132285922L;
 
-	public Table(String name,String PrimaryKey) throws IOException {
+	public Table(String name, String PrimaryKey) throws IOException {
 		this.allPages = new ArrayList<String>();
 		this.Indexes = new ArrayList<String>();
 		this.tableName = name;
@@ -51,15 +51,17 @@ public class Table implements Serializable {
 		 * os = new ObjectOutputStream(fs); os.writeObject(x); os.close();
 		 * fs.close();
 		 */
-		serialize(path, this);
+		// serialize(path, this);
+		DBApp.virtualDirectory.put(path, this);
 		BTree T = new BTree();
 		path = "data/tables/" + tableName + "/BTree/" + PrimaryKey + ".bin";
-		serialize(path, T);
+		// serialize(path, T);
+		DBApp.virtualDirectory.put(path, T);
 		LinearHashtable H = new LinearHashtable();
 		path = "data/tables/" + tableName + "/hashtable/" + PrimaryKey + ".bin";
-		serialize(path, H);
-		
-		
+		// serialize(path, H);
+		DBApp.virtualDirectory.put(path, H);
+
 	}
 
 	/*
@@ -88,6 +90,7 @@ public class Table implements Serializable {
 	public ArrayList<String> getAllPages() {
 		return allPages;
 	}
+
 	public ArrayList<String> getIndexes() {
 		return Indexes;
 	}
@@ -123,12 +126,13 @@ public class Table implements Serializable {
 	public void addPagetoArray(Page x) {
 		allPages.add(x.getPageName());
 	}
+
 	public void addIndextoArray(String x) {
 		Indexes.add(x);
 	}
 
 	public static void main(String[] args) throws IOException {
-		//new Table("Test2");
+		// new Table("Test2");
 	}
 
 	public static Object deserialize(String path) throws IOException,

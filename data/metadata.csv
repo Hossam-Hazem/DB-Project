@@ -23,3 +23,7 @@ kareem, col4, str, false, false, null
 kareem, col3, int, false, false, null
 kareem, col2, int, false, false, null
 kareem, col1, str, true, false, table1.id
+testAll, col4, str, false, false, null
+testAll, col3, int, false, true, null
+testAll, col2, int, true, false, null
+testAll, col1, str, false, false, table1.id

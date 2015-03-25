@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Array;
+import java.sql.Savepoint;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -18,6 +20,32 @@ import BPTree.BTree;
 
 public class DBApp {
 	static String tempTabe;
+	static Hashtable<String, Object> virtualDirectory;
+
+	private static void init() {
+		virtualDirectory = new Hashtable<String, Object>();
+	}
+
+	public static void saveAll() throws DBEngineException, IOException {
+
+		Enumeration ColNames = virtualDirectory.keys();
+		while (ColNames.hasMoreElements()) {
+			String ColName = (String) ColNames.nextElement();
+			serialize(ColName, virtualDirectory.get(ColName));
+		}
+
+	}
+
+	private static Object loadFileDyn(String Path)
+			throws ClassNotFoundException, IOException {
+		// TODO Auto-generated method stub
+		Object ret = virtualDirectory.get(Path);
+		if (ret != null) {
+			return ret;
+		} else {
+			return deserialize(Path);
+		}
+	}
 
 	@SuppressWarnings("rawtypes")
 	public static void createTable(String strTableName,
@@ -125,14 +153,16 @@ public class DBApp {
 		// //Indexing
 		String Tablepath = "data/tables/" + strTableName + "/" + strTableName
 				+ ".bin";
-		Table T = (Table) deserialize(Tablepath);
+		// Table T = (Table) deserialize(Tablepath);
+		Table T = (Table) loadFileDyn(Tablepath);
 		T.addIndextoArray(strColName);
 		BTree B = new BTree();
 		LinearHashtable L = new LinearHashtable();
 		for (int i = 0; i < T.getNameCounter(); i++) {
 			String Pagepath = "data/tables/" + strTableName + "/" + "pages/"
 					+ i;
-			Page P = (Page) deserialize(Pagepath);
+			// Page P = (Page) deserialize(Pagepath);
+			Page P = (Page) loadFileDyn(Pagepath);
 			ArrayList<Hashtable<String, String>> AllRecords = P.getRecords();
 			for (int j = 0; j < P.getRowsCounter(); j++) {
 				Hashtable<String, String> r = AllRecords.get(j);
@@ -146,9 +176,12 @@ public class DBApp {
 				+ strColName + ".bin";
 		String LHTPath = "data/tables/" + strTableName + "/" + "hashtable/"
 				+ strColName + ".bin";
-		serialize(Tablepath, T);
-		serialize(BTreePath, B);
-		serialize(LHTPath, L);
+		// serialize(Tablepath, T);
+		virtualDirectory.put(Tablepath, T);
+		// serialize(BTreePath, B);
+		virtualDirectory.put(BTreePath, B);
+		// serialize(LHTPath, L);
+		virtualDirectory.put(LHTPath, L);
 		System.out.println("Index Done");
 
 	}
@@ -160,7 +193,8 @@ public class DBApp {
 		String currentPagepath;
 		String path = "data/tables/" + strTableName + "/" + strTableName
 				+ ".bin";
-		Table x = (Table) deserialize(path);
+		// Table x = (Table) deserialize(path);
+		Table x = (Table) loadFileDyn(path);
 		if (x.getAllPages().size() == 0) {
 			x.createPage();
 			System.out.println("YAAAAY First page intialized");
@@ -171,7 +205,8 @@ public class DBApp {
 		// System.out.println(lastPage);
 		path = "data/tables/" + strTableName + "/" + "pages/" + lastPage
 				+ ".class";
-		Page lastPageinTable = (Page) deserialize(path);
+		// Page lastPageinTable = (Page) deserialize(path);
+		Page lastPageinTable = (Page) loadFileDyn(path);
 		if (!lastPageinTable.isFull()) {
 			lastPageinTable.addRecord(htblColNameValue);
 			lastPageinTable
@@ -182,7 +217,8 @@ public class DBApp {
 			System.out.println("New page created HOHOHOHO");
 			path = "data/tables/" + strTableName + "/" + "pages/" + lastPage
 					+ ".class";
-			lastPageinTable = (Page) deserialize(path);
+			// lastPageinTable = (Page) deserialize(path);
+			lastPageinTable = (Page) loadFileDyn(path);
 			lastPageinTable.addRecord(htblColNameValue);
 			lastPageinTable
 					.setRowsCounter(lastPageinTable.getRowsCounter() + 1);
@@ -190,10 +226,12 @@ public class DBApp {
 		}
 		currentPagepath = path;
 		path = "data/tables/" + strTableName + "/" + strTableName + ".bin";
-		serialize(path, x);
+		// serialize(path, x);
+		virtualDirectory.put(path, x);
 		path = "data/tables/" + strTableName + "/" + "pages/" + lastPage
 				+ ".class";
-		serialize(path, lastPageinTable);
+		// serialize(path, lastPageinTable);
+		virtualDirectory.put(path, lastPageinTable);
 		// indexing
 		ArrayList<String> Indexes = x.getIndexes();
 		for (int c = 0; c < Indexes.size(); c++) {
@@ -202,13 +240,17 @@ public class DBApp {
 					+ index + ".bin";
 			String LHTPath = "data/tables/" + strTableName + "/" + "hashtable/"
 					+ index + ".bin";
-			BTree B = (BTree) deserialize(BTreePath);
-			LinearHashtable L = (LinearHashtable) deserialize(LHTPath);
+			// BTree B = (BTree) deserialize(BTreePath);
+			BTree B = (BTree) loadFileDyn(BTreePath);
+			// LinearHashtable L = (LinearHashtable) deserialize(LHTPath);
+			LinearHashtable L = (LinearHashtable) loadFileDyn(LHTPath);
 			String value = htblColNameValue.get(index);
 			B.put(value, currentPagepath);
 			L.put(value, currentPagepath);
-			serialize(LHTPath, L);
-			serialize(BTreePath, B);
+			// serialize(LHTPath, L);
+			virtualDirectory.put(LHTPath, L);
+			// serialize(BTreePath, B);
+			virtualDirectory.put(BTreePath, B);
 		}
 
 	}
@@ -220,27 +262,34 @@ public class DBApp {
 				strOperator);
 		String Tpath = "data/tables/" + strTableName + "/" + strTableName
 				+ ".bin";
-		Table T = (Table) deserialize(Tpath);
+		// Table T = (Table) deserialize(Tpath);
+		Table T = (Table) loadFileDyn(Tpath);
 		String PrimaryKeyColumn = T.getIndexes().get(0);
 		String BTreePath = "data/tables/" + strTableName + "/" + "BTree/"
 				+ PrimaryKeyColumn + ".bin";
 		String LHTPath = "data/tables/" + strTableName + "/" + "hashtable/"
 				+ PrimaryKeyColumn + ".bin";
-		BTree B = (BTree) deserialize(BTreePath);
-		LinearHashtable L = (LinearHashtable) deserialize(LHTPath);
+		// BTree B = (BTree) deserialize(BTreePath);
+		BTree B = (BTree) loadFileDyn(BTreePath);
+		// LinearHashtable L = (LinearHashtable) deserialize(LHTPath);
+		LinearHashtable L = (LinearHashtable) loadFileDyn(LHTPath);
 
 		ArrayList<String> indices = T.getIndexes();
 		while (I.hasNext()) {
 			Hashtable<String, String> r = (Hashtable<String, String>) I.next();
 			String PrimaryKeyValue = r.get(PrimaryKeyColumn);
 			String RPath = (String) L.get(PrimaryKeyValue);
-			Page p = (Page) deserialize(RPath);
+			// Page p = (Page) deserialize(RPath);
+			Page p = (Page) loadFileDyn(RPath);
 			p.removeRecord(PrimaryKeyColumn, PrimaryKeyValue);
 			L.delete(PrimaryKeyValue);
 			B.delete(PrimaryKeyValue);
-			serialize(RPath, p);
-			serialize(LHTPath, L);
-			serialize(BTreePath, B);
+			// serialize(RPath, p);
+			virtualDirectory.put(RPath, p);
+			// serialize(LHTPath, L);
+			virtualDirectory.put(LHTPath, L);
+			// serialize(BTreePath, B);
+			virtualDirectory.put(BTreePath, B);
 		}
 
 	}
@@ -251,7 +300,8 @@ public class DBApp {
 		ArrayList result = new ArrayList();
 		ArrayList TakenRecords = new ArrayList();
 		String tablepath = "data/tables/" + strTable + "/" + strTable + ".bin";
-		Table T = (Table) deserialize(tablepath);
+		// Table T = (Table) deserialize(tablepath);
+		Table T = (Table) loadFileDyn(tablepath);
 		Iterator coloumnsI = htblColNameValue.keySet().iterator();
 		if (strOperator.equals("OR")) {
 			while (coloumnsI.hasNext()) {
@@ -261,10 +311,13 @@ public class DBApp {
 				if (T.getIndexes().contains(ColumnName)) {
 					String LHTPath = "data/tables/" + strTable + "/"
 							+ "hashtable/" + ColumnName + ".bin";
-					LinearHashtable L = (LinearHashtable) deserialize(LHTPath);
+					// LinearHashtable L = (LinearHashtable)
+					// deserialize(LHTPath);
+					LinearHashtable L = (LinearHashtable) loadFileDyn(LHTPath);
 					String RecordPath = (String) L.get(ColumnValue);
 					if (RecordPath != null) {
-						Page p = (Page) deserialize(RecordPath);
+						// Page p = (Page) deserialize(RecordPath);
+						Page p = (Page) loadFileDyn(RecordPath);
 						Hashtable<String, String> r = p.getRecord(ColumnName,
 								ColumnValue);
 						if (!TakenRecords.contains(p.getPageName()
@@ -282,7 +335,8 @@ public class DBApp {
 						String Pname = (String) PagesI.next();
 						String PagePath = "data/tables/" + strTable + "/"
 								+ "pages/" + Pname + ".class";
-						Page p = (Page) deserialize(PagePath);
+						// Page p = (Page) deserialize(PagePath);
+						Page p = (Page) loadFileDyn(PagePath);
 						Hashtable<String, String> r = p.getRecord(ColumnName,
 								ColumnValue);
 						ArrayList<Hashtable<String, String>> allRecordsInPage = p
@@ -319,10 +373,13 @@ public class DBApp {
 					if (T.getIndexes().contains(ColumnName)) {
 						String LHTPath = "data/tables/" + strTable + "/"
 								+ "hashtable/" + ColumnName + ".bin";
-						LinearHashtable L = (LinearHashtable) deserialize(LHTPath);
+						// LinearHashtable L = (LinearHashtable)
+						// deserialize(LHTPath);
+						LinearHashtable L = (LinearHashtable) loadFileDyn(LHTPath);
 						String RecordPath = (String) L.get(ColumnValue);
 						if (RecordPath != null) {
-							Page p = (Page) deserialize(RecordPath);
+							// Page p = (Page) deserialize(RecordPath);
+							Page p = (Page) loadFileDyn(RecordPath);
 							Hashtable<String, String> r = p.getRecord(
 									ColumnName, ColumnValue);
 							result.add(r);
@@ -335,7 +392,8 @@ public class DBApp {
 							String Pname = (String) PagesI.next();
 							String PagePath = "data/tables/" + strTable + "/"
 									+ "pages/" + Pname + ".class";
-							Page p = (Page) deserialize(PagePath);
+							// Page p = (Page) deserialize(PagePath);
+							Page p = (Page) loadFileDyn(PagePath);
 							Hashtable<String, String> r = p.getRecord(
 									ColumnName, ColumnValue);
 							ArrayList<Hashtable<String, String>> allRecordsInPage = p
@@ -390,7 +448,8 @@ public class DBApp {
 		ArrayList result = new ArrayList();
 		ArrayList TakenRecords = new ArrayList();
 		String tablepath = "data/tables/" + strTable + "/" + strTable + ".bin";
-		Table T = (Table) deserialize(tablepath);
+		// Table T = (Table) deserialize(tablepath);
+		Table T = (Table) loadFileDyn(tablepath);
 		Iterator coloumnsI = htblColNameRange.keySet().iterator();
 		if (strOperator.equals("OR")) {
 			while (coloumnsI.hasNext()) {
@@ -412,7 +471,8 @@ public class DBApp {
 				if (T.getIndexes().contains(ColumnName)) {
 					String BTreePath = "data/tables/" + strTable + "/"
 							+ "BTree/" + ColumnName + ".bin";
-					BTree B = (BTree) deserialize(BTreePath);
+					// BTree B = (BTree) deserialize(BTreePath);
+					BTree B = (BTree) loadFileDyn(BTreePath);
 					ArrayList tempo = new ArrayList();
 					ArrayList tempoe = new ArrayList();
 					ArrayList pathes = new ArrayList();
@@ -426,7 +486,8 @@ public class DBApp {
 							while (pathesI.hasNext()) {
 								String PagePath = (String) pathesI.next();
 								if (!PagesScanned.contains(PagePath)) {
-									Page p = (Page) deserialize((PagePath));
+									// Page p = (Page) deserialize((PagePath));
+									Page p = (Page) loadFileDyn((PagePath));
 									Iterator Itemp = p.getRecordbiggerthan(
 											ColumnName, ColumnValue).iterator();
 									while (Itemp.hasNext()) {
@@ -453,7 +514,8 @@ public class DBApp {
 							while (pathesI.hasNext()) {
 								String PagePath = (String) pathesI.next();
 								if (!PagesScanned.contains(PagePath)) {
-									Page p = (Page) deserialize((PagePath));
+									// Page p = (Page) deserialize((PagePath));
+									Page p = (Page) loadFileDyn((PagePath));
 									Iterator Itemp = p.getRecordbiggerthan(
 											ColumnName, ColumnValue).iterator();
 									while (Itemp.hasNext()) {
@@ -476,7 +538,8 @@ public class DBApp {
 
 						if (Columnrange.length() != 1) {
 							String path = (String) B.search(ColumnValue);
-							Page p = (Page) deserialize((path));
+							// Page p = (Page) deserialize((path));
+							Page p = (Page) loadFileDyn((path));
 							Hashtable<String, String> r = (Hashtable<String, String>) p
 									.getRecord(ColumnName, ColumnValue);
 							if (!TakenRecords.contains(p.getPageName()
@@ -488,59 +551,60 @@ public class DBApp {
 
 						}
 
-					} }else {
-						Iterator PagesI = T.getAllPages().iterator();
-						while (PagesI.hasNext()) {
-							ArrayList tempo = new ArrayList();
-							ArrayList tempoe = new ArrayList();
-							String Pname = (String) PagesI.next();
-							String PagePath = "data/tables/" + strTable + "/"
-									+ "pages/" + Pname + ".class";
-							Page p = (Page) deserialize(PagePath);
-							if (Columnrange.length() != 1)
-								tempoe = p.getRecords(ColumnName, ColumnValue);
+					}
+				} else {
+					Iterator PagesI = T.getAllPages().iterator();
+					while (PagesI.hasNext()) {
+						ArrayList tempo = new ArrayList();
+						ArrayList tempoe = new ArrayList();
+						String Pname = (String) PagesI.next();
+						String PagePath = "data/tables/" + strTable + "/"
+								+ "pages/" + Pname + ".class";
+						// Page p = (Page) deserialize(PagePath);
+						Page p = (Page) loadFileDyn(PagePath);
+						if (Columnrange.length() != 1)
+							tempoe = p.getRecords(ColumnName, ColumnValue);
 
-							if (Columnrange.charAt(0) == '>')
-								tempo = p.getRecordbiggerthan(ColumnName,
-										ColumnValue);
+						if (Columnrange.charAt(0) == '>')
+							tempo = p.getRecordbiggerthan(ColumnName,
+									ColumnValue);
 
-							if (Columnrange.charAt(0) == '<')
-								tempo = p.getRecordLessthan(ColumnName,
-										ColumnValue);
+						if (Columnrange.charAt(0) == '<')
+							tempo = p
+									.getRecordLessthan(ColumnName, ColumnValue);
 
-							Iterator tempoI = tempoe.iterator();
-							while (tempoI.hasNext()) {
-								Hashtable<String, String> r = (Hashtable<String, String>) tempoI
-										.next();
-								if (!TakenRecords.contains(p.getPageName()
-										+ p.getrecordPlace(r))) {
-									result.add(r);
-									TakenRecords.add(p.getPageName()
-											+ p.getrecordPlace(r));
-								}
-
-							}
-							tempoI = tempo.iterator();
-							while (tempoI.hasNext()) {
-								Hashtable<String, String> r = (Hashtable<String, String>) tempoI
-										.next();
-								if (!TakenRecords.contains(p.getPageName()
-										+ p.getrecordPlace(r))) {
-									result.add(r);
-									TakenRecords.add(p.getPageName()
-											+ p.getrecordPlace(r));
-								}
+						Iterator tempoI = tempoe.iterator();
+						while (tempoI.hasNext()) {
+							Hashtable<String, String> r = (Hashtable<String, String>) tempoI
+									.next();
+							if (!TakenRecords.contains(p.getPageName()
+									+ p.getrecordPlace(r))) {
+								result.add(r);
+								TakenRecords.add(p.getPageName()
+										+ p.getrecordPlace(r));
 							}
 
-							/*
-							 * if (r != null) if
-							 * (!TakenRecords.contains(p.getPageName() +
-							 * p.getrecordPlace(r))) {// check if the // record
-							 * isnt // already // selected result.add(r);
-							 * TakenRecords.add(r); }
-							 */
 						}
-					
+						tempoI = tempo.iterator();
+						while (tempoI.hasNext()) {
+							Hashtable<String, String> r = (Hashtable<String, String>) tempoI
+									.next();
+							if (!TakenRecords.contains(p.getPageName()
+									+ p.getrecordPlace(r))) {
+								result.add(r);
+								TakenRecords.add(p.getPageName()
+										+ p.getrecordPlace(r));
+							}
+						}
+
+						/*
+						 * if (r != null) if
+						 * (!TakenRecords.contains(p.getPageName() +
+						 * p.getrecordPlace(r))) {// check if the // record isnt
+						 * // already // selected result.add(r);
+						 * TakenRecords.add(r); }
+						 */
+					}
 
 				}
 
@@ -603,7 +667,7 @@ public class DBApp {
 	public static String getOperator(String x) {
 		String res = "";
 		if (x.charAt(1) == '=') {
-			//System.out.println("" + x.charAt(0) + x.charAt(1));
+			// System.out.println("" + x.charAt(0) + x.charAt(1));
 			return "" + x.charAt(0) + x.charAt(1);
 		}
 
@@ -637,17 +701,23 @@ public class DBApp {
 
 	public static void main(String[] args) throws IOException, DBAppException,
 			ClassNotFoundException, DBEngineException {
-		/*
-		 * Hashtable<String, String> htblColNameType = new Hashtable<String,
-		 * String>(); htblColNameType.put("col1", "str");
-		 * htblColNameType.put("col2", "int"); htblColNameType.put("col3",
-		 * "int"); htblColNameType.put("col4", "str");
-		 * 
-		 * Hashtable<String, String> htblColNameRefs = new Hashtable<String,
-		 * String>(); htblColNameRefs.put("col1", "table1.id");
-		 * 
-		 * createTable("testAll6", htblColNameType, htblColNameRefs, "col2");
-		 */
+
+		// test save all by doing the following : go to ===>
+
+		init();
+
+		Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
+		htblColNameType.put("col1", "str");
+		htblColNameType.put("col2", "int");
+		htblColNameType.put("col3", "int");
+		htblColNameType.put("col4", "str");
+
+		Hashtable<String, String> htblColNameRefs = new Hashtable<String, String>();
+		htblColNameRefs.put("col1", "table1.id");
+
+		// ===> execute once and comment createTable and execute multiple times
+		createTable("testAll", htblColNameType, htblColNameRefs, "col2");
+
 		// createIndex("testAll", "col3");
 
 		// Clean csv file
@@ -664,14 +734,18 @@ public class DBApp {
 		 * (Table)os.readObject(); System.out.println(x.getTableName());
 		 * os.close(); fi.close();
 		 */
-		/*
-		 * for (int i = 0; i < 200; i++) { Hashtable<String, String> insertion =
-		 * new Hashtable<String, String>(); insertion.put("col1", "str");
-		 * insertion.put("col2", "int"); insertion.put("col3", "int");
-		 * insertion.put("col4", "str");
-		 * 
-		 * insertIntoTable("testAll2", insertion); }
-		 */
+
+		for (int i = 0; i < 200; i++) {
+			Hashtable<String, String> insertion = new Hashtable<String, String>();
+			insertion.put("col1", "str");
+			insertion.put("col2", "int");
+			insertion.put("col3", "int");
+			insertion.put("col4", "str");
+
+			insertIntoTable("testAll", insertion);
+		}
+
+		saveAll();
 
 		/*
 		 * Hashtable<String, String> insertion = new Hashtable<String,
@@ -769,56 +843,55 @@ public class DBApp {
 		 * x.print();
 		 */
 		// test range test
-		/*Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
-		htblColNameType.put("name", "str");
-		htblColNameType.put("age", "int");
-		htblColNameType.put("ID", "int");
-		htblColNameType.put("major", "str");
-
-		Hashtable<String, String> htblColNameRefs = new Hashtable<String, String>();
-
-		createTable("testrangeor", htblColNameType, htblColNameRefs, "ID");
-
-		Hashtable<String, String> insertion = new Hashtable<String, String>();
-		insertion.put("name", "omar");
-		insertion.put("age", "2");
-		insertion.put("ID", "10999");
-		insertion.put("major", "cs");
-
-		insertIntoTable("testrangeor", insertion);
-
-		insertion = new Hashtable<String, String>();
-		insertion.put("name", "hossam");
-		insertion.put("age", "3");
-		insertion.put("ID", "286205");
-		insertion.put("major", "cs");
-
-		insertIntoTable("testrangeor", insertion);
-
-		insertion = new Hashtable<String, String>();
-		insertion.put("name", "kareem");
-		insertion.put("age", "5");
-		insertion.put("ID", "2810989");
-		insertion.put("major", "DMET");
-
-		insertIntoTable("testrangeor", insertion);*/
-
-		Page p = (Page) deserialize("data/tables/testrangeor/Pages/0.class");
-		System.out.println("All Records: " + p.getRecords());
-
-		BTree x = (BTree) deserialize("data/tables/testrangeor/BTree/ID.bin");
-		x.print();
-
-		Hashtable<String, String> htblColNameRange = new Hashtable<String, String>();
-		htblColNameRange.put("age", ">=0");
-		htblColNameRange.put("ID", ">286205");
-		// htblColNameValue.put("name", "hossam");
-		Iterator I = selectRangeFromTable("testrangeor", htblColNameRange, "OR");
-		
-		while (I.hasNext()) {
-			System.out.println("done " + I.next().toString());
-		}
-
+		/*
+		 * Hashtable<String, String> htblColNameType = new Hashtable<String,
+		 * String>(); htblColNameType.put("name", "str");
+		 * htblColNameType.put("age", "int"); htblColNameType.put("ID", "int");
+		 * htblColNameType.put("major", "str");
+		 * 
+		 * Hashtable<String, String> htblColNameRefs = new Hashtable<String,
+		 * String>();
+		 * 
+		 * createTable("testrangeor", htblColNameType, htblColNameRefs, "ID");
+		 * 
+		 * Hashtable<String, String> insertion = new Hashtable<String,
+		 * String>(); insertion.put("name", "omar"); insertion.put("age", "2");
+		 * insertion.put("ID", "10999"); insertion.put("major", "cs");
+		 * 
+		 * insertIntoTable("testrangeor", insertion);
+		 * 
+		 * insertion = new Hashtable<String, String>(); insertion.put("name",
+		 * "hossam"); insertion.put("age", "3"); insertion.put("ID", "286205");
+		 * insertion.put("major", "cs");
+		 * 
+		 * insertIntoTable("testrangeor", insertion);
+		 * 
+		 * insertion = new Hashtable<String, String>(); insertion.put("name",
+		 * "kareem"); insertion.put("age", "5"); insertion.put("ID", "2810989");
+		 * insertion.put("major", "DMET");
+		 * 
+		 * insertIntoTable("testrangeor", insertion);
+		 */
+		/*
+		 * // Page p = (Page)
+		 * deserialize("data/tables/testrangeor/Pages/0.class"); Page p = (Page)
+		 * loadFileDyn("data/tables/testrangeor/Pages/0.class");
+		 * System.out.println("All Records: " + p.getRecords());
+		 * 
+		 * // BTree x = (BTree) //
+		 * deserialize("data/tables/testrangeor/BTree/ID.bin"); BTree x =
+		 * (BTree) loadFileDyn("data/tables/testrangeor/BTree/ID.bin");
+		 * x.print();
+		 * 
+		 * Hashtable<String, String> htblColNameRange = new Hashtable<String,
+		 * String>(); htblColNameRange.put("age", ">=0");
+		 * htblColNameRange.put("ID", ">286205"); //
+		 * htblColNameValue.put("name", "hossam"); Iterator I =
+		 * selectRangeFromTable("testrangeor", htblColNameRange, "OR");
+		 * 
+		 * while (I.hasNext()) { System.out.println("done " +
+		 * I.next().toString()); }
+		 */
 	}
 }
 
