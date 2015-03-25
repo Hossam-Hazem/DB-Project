@@ -52,10 +52,11 @@ public class BTreeTest {
 		tree.insert(7);
 		tree.insert(8);
 		tree.insert(9);
-		
+		tree.insert(5);
 		tree.print();
 		//System.out.println(tree.getPreviousNode(3).toString());
-		System.out.println(tree.getbiggerthan(15).toString());
+		System.out.println(tree.getbiggerthan(14).toString());
+		//System.out.println(tree.);
         //DBBTreeIterator iterator = new DBBTreeIterator(tree);
         //iterator.print();
 		return;

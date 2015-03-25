@@ -75,48 +75,54 @@ public class BTree<TKey extends Comparable<TKey>, TValue> implements
 
 	public ArrayList getSmallerthan(TKey Key) {
 		ArrayList res = new ArrayList();
-		TKey k = Key;
-		BTreeLeafNode x = this.searchNode(Key);
-		boolean flag = false;
-		while (x != null) {
-			if (!flag) {
-				for (int c = 0; !x.keys[c].equals(k); c++) {
-					res.add(this.search((TKey) x.keys[c]));
-				}
-				flag = true;
+
+		BTreeLeafNode x = this.getSmallest();
+		TKey pointer = (TKey) x.keys[0];
+		int c = 0;
+		while (pointer.compareTo(Key) < 0) {
+			res.add(this.search((TKey) pointer));
+			c++;
+			pointer = (TKey) x.keys[c];
+			if (pointer == null) {
+				x = (BTreeLeafNode) x.rightSibling;
+				if (x == null)
+					break;
+				c = 0;
+				pointer = (TKey) x.keys[c];
+				
 			}
-			else{
-				int count = x.keys.length;
-				for (int c = 0; c<count&&x.keys[c]!=null; c++) {
-					
-					res.add(this.search((TKey) x.keys[c]));
-				}
-			}
-			x=(BTreeLeafNode) x.leftSibling;
+			
 		}
+
 		return res;
 	}
+
 	public ArrayList getbiggerthan(TKey Key) {
+		this.put(Key, (TValue)"Dummy");
 		ArrayList res = new ArrayList();
 		TKey k = Key;
 		BTreeLeafNode x = this.searchNode(Key);
 		boolean flag = false;
 		while (x != null) {
 			if (!flag) {
-				for (int c = x.keys.length-2; !x.keys[c].equals(k); c--) {
-					res.add(this.search((TKey) x.keys[c]));
+				for (int c = 0; c < x.keys.length; c++) {
+					if (x.keys[c] != null)
+
+						if (((Comparable<TKey>) x.keys[c]).compareTo(Key) > 0)
+
+							res.add(this.search((TKey) x.keys[c]));
 				}
 				flag = true;
-			}
-			else{
+			} else {
 				int count = x.keys.length;
-				for (int c = 0; c<count&&x.keys[c]!=null; c++) {
-					
+				for (int c = 0; c < count && x.keys[c] != null; c++) {
+
 					res.add(this.search((TKey) x.keys[c]));
 				}
 			}
-			x=(BTreeLeafNode) x.rightSibling;
+			x = (BTreeLeafNode) x.rightSibling;
 		}
+		this.delete(Key);
 		return res;
 	}
 
@@ -133,7 +139,7 @@ public class BTree<TKey extends Comparable<TKey>, TValue> implements
 				this.root = n;
 		}
 	}
-
+	
 	/**
 	 * Search the leaf node which should contain the specified key
 	 */
@@ -182,6 +188,9 @@ public class BTree<TKey extends Comparable<TKey>, TValue> implements
 	}
 
 	public BTreeLeafNode getSmallest() {
+		return this.root.getSmallest();
+	}
+	public BTreeLeafNode getlargest() {
 		return this.root.getSmallest();
 	}
 
