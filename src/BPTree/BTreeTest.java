@@ -54,6 +54,8 @@ public class BTreeTest {
 		tree.insert(9);
 		
 		tree.print();
+		//System.out.println(tree.getPreviousNode(3).toString());
+		System.out.println(tree.getbiggerthan(15).toString());
         //DBBTreeIterator iterator = new DBBTreeIterator(tree);
         //iterator.print();
 		return;

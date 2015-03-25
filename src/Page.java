@@ -8,38 +8,36 @@ import java.util.Iterator;
 import java.util.Properties;
 
 //metadata.csv
-public class Page implements Serializable{
+public class Page implements Serializable {
 	private int MaximumRowsCountinPage;
 	private int rowsCounter;
 	private ArrayList<Hashtable<String, String>> records;
 	private String pageName;
-	
-	public Page(String pageName) throws IOException{
+
+	public Page(String pageName) throws IOException {
 		this.MaximumRowsCountinPage = getPageSize();
-		records = new ArrayList<Hashtable<String, String>>(MaximumRowsCountinPage);
+		records = new ArrayList<Hashtable<String, String>>(
+				MaximumRowsCountinPage);
 		rowsCounter = 0;
 		this.pageName = pageName;
-		
+
 		System.out.println(this.MaximumRowsCountinPage);
 	}
-	
-	public int getPageSize() throws IOException{
+
+	public int getPageSize() throws IOException {
 		InputStream input = new FileInputStream("config/DBApp.properties");
 		Properties prop = new Properties();
 		prop.load(input);
 		return Integer.parseInt(prop.getProperty("MaximumRowsCountinPage"));
 	}
-	
-	
-	public boolean isFull(){
-		if(rowsCounter < MaximumRowsCountinPage){
+
+	public boolean isFull() {
+		if (rowsCounter < MaximumRowsCountinPage) {
 			return false;
 		}
 		return true;
 	}
-	
-	
-	
+
 	public static void main(String[] args) throws IOException {
 		new Page("0");
 	}
@@ -60,10 +58,6 @@ public class Page implements Serializable{
 		this.rowsCounter = rowsCounter;
 	}
 
-	
-
-	
-
 	public ArrayList<Hashtable<String, String>> getRecords() {
 		return records;
 	}
@@ -82,35 +76,80 @@ public class Page implements Serializable{
 
 	public void addRecord(Hashtable<String, String> htblColNameValue) {
 		records.add(htblColNameValue);
-	//	rowsCounter++;
-		
+		// rowsCounter++;
+
 	}
-	public int getrecordPlace(Hashtable<String, String> x){
-		for(int c = 0;c<x.size();c++){
-			if(records.get(c)==x)
+
+	public int getrecordPlace(Hashtable<String, String> x) {
+		for (int c = 0; c < x.size(); c++) {
+			if (records.get(c) == x)
 				return c;
-			
+
 		}
-		 return -1;
+		return -1;
 	}
-	public Hashtable<String, String> getRecord(String ColumnName,String ColumnValue){
+
+	public Hashtable<String, String> getRecord(String ColumnName,
+			String ColumnValue) {
 		Iterator i = records.iterator();
 		Hashtable<String, String> x;
-		while(i.hasNext()){
-			 x=(Hashtable<String, String>) i.next();
-			if(x.get(ColumnName).equals(ColumnValue)){
+		while (i.hasNext()) {
+			x = (Hashtable<String, String>) i.next();
+			if (x.get(ColumnName).equals(ColumnValue)) {
 				return x;
 			}
 		}
 		return null;
 	}
-public boolean removeRecord(String ColumnName,String ColumnValue){
-		
-		Iterator i = ((ArrayList<Hashtable<String, String>>) records.clone()).iterator();
+	public ArrayList<Hashtable<String, String>> getRecords(String ColumnName,
+			String ColumnValue) {
+		ArrayList res = new ArrayList();
+		Iterator i = records.iterator();
 		Hashtable<String, String> x;
-		while(i.hasNext()){
-			 x=(Hashtable<String, String>) i.next();
-			if(x.get(ColumnName).equals(ColumnValue)){
+		while (i.hasNext()) {
+			x = (Hashtable<String, String>) i.next();
+			if (x.get(ColumnName).equals(ColumnValue)) {
+				res.add(x);
+			}
+		}
+		return res;
+	}
+	public ArrayList<Hashtable<String, String>> getRecordLessthan(String ColumnName,
+			String ColumnValue) {
+		ArrayList res = new ArrayList();
+		Iterator i = records.iterator();
+		Hashtable<String, String> x;
+		while (i.hasNext()) {
+			x = (Hashtable<String, String>) i.next();
+			if (x.get(ColumnName).compareTo(ColumnValue)<0) {
+				res.add(x);
+			}
+		}
+		return res;
+	}
+	public ArrayList<Hashtable<String, String>>getRecordbiggerthan(String ColumnName,
+			String ColumnValue) {
+		ArrayList res = new ArrayList();
+		Iterator i = records.iterator();
+		Hashtable<String, String> x;
+		while (i.hasNext()) {
+			x = (Hashtable<String, String>) i.next();
+			if (x.get(ColumnName).compareTo(ColumnValue)>0) {
+				res.add(x);
+			}
+		}
+		return res;
+	}
+	
+
+	public boolean removeRecord(String ColumnName, String ColumnValue) {
+
+		Iterator i = ((ArrayList<Hashtable<String, String>>) records.clone())
+				.iterator();
+		Hashtable<String, String> x;
+		while (i.hasNext()) {
+			x = (Hashtable<String, String>) i.next();
+			if (x.get(ColumnName).equals(ColumnValue)) {
 				return records.remove(x);
 			}
 		}
