@@ -77,11 +77,14 @@ public class Table implements Serializable {
 	public void createPage() throws IOException {
 		Page x = new Page("" + nameCounter);
 		String path = pagesDirectory + "/" + x.getPageName() + ".class";
+		/*
 		FileOutputStream fs = new FileOutputStream(path);
 		ObjectOutputStream os = new ObjectOutputStream(fs);
 		os.writeObject(x);
 		os.close();
 		fs.close();
+		*/
+		DBApp.virtualDirectory.put(path, x);
 		allPages.add("" + nameCounter);
 		nameCounter++;
 

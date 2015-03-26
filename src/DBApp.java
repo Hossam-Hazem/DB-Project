@@ -33,6 +33,7 @@ public class DBApp {
 			String ColName = (String) ColNames.nextElement();
 			serialize(ColName, virtualDirectory.get(ColName));
 		}
+		virtualDirectory.clear();
 
 	}
 
@@ -834,7 +835,7 @@ public class DBApp {
 			ClassNotFoundException, DBEngineException {
 
 		// test save all by doing the following : go to ===>
-/*
+
 		init();
 
 		Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
@@ -847,8 +848,8 @@ public class DBApp {
 		htblColNameRefs.put("col1", "table1.id");
 
 		// ===> execute once and comment createTable and execute multiple times
-		createTable("testAll", htblColNameType, htblColNameRefs, "col2");
-		*/
+		//createTable("testAll", htblColNameType, htblColNameRefs, "col2");
+		
 
 		// createIndex("testAll", "col3");
 
@@ -867,7 +868,7 @@ public class DBApp {
 		 * os.close(); fi.close();
 		 */
 
-		/*for (int i = 0; i < 200; i++) {
+		for (int i = 0; i < 300; i++) {
 			Hashtable<String, String> insertion = new Hashtable<String, String>();
 			insertion.put("col1", "str");
 			insertion.put("col2", "int");
@@ -877,8 +878,8 @@ public class DBApp {
 			insertIntoTable("testAll", insertion);
 		}
 
-		saveAll();
-*/
+	saveAll();
+
 		/*
 		 * Hashtable<String, String> insertion = new Hashtable<String,
 		 * String>(); insertion.put("col1", "str"); insertion.put("col2",
@@ -1022,6 +1023,11 @@ public class DBApp {
 		 * while (I.hasNext()) { System.out.println("done " +
 		 * I.next().toString()); }
 		 */
+		
+		
+		//test V2
+		
+		/*
 		init();
 
 		Hashtable<String, String> htblColNameType = new Hashtable<String,
@@ -1062,7 +1068,7 @@ public class DBApp {
 					 
 					 while (I.hasNext()) { System.out.println("done " +
 					 I.next().toString()); }
-		
+		*/
 
 	}
 }
