@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -7,8 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Array;
-import java.sql.Savepoint;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -33,6 +30,7 @@ public class DBApp {
 			String ColName = (String) ColNames.nextElement();
 			serialize(ColName, virtualDirectory.get(ColName));
 		}
+		virtualDirectory.clear();
 
 	}
 
@@ -450,14 +448,17 @@ public class DBApp {
 		os.close();
 		fs.close();
 	}
-	public static ArrayList SelectValueQueryOneCondition(String strTable,String ColumnName,String ColumnValue) throws ClassNotFoundException, IOException{
+
+	public static ArrayList SelectValueQueryOneCondition(String strTable,
+			String ColumnName, String ColumnValue)
+			throws ClassNotFoundException, IOException {
 		ArrayList result = new ArrayList();
 		String tablepath = "data/tables/" + strTable + "/" + strTable + ".bin";
 		// Table T = (Table) deserialize(tablepath);
 		Table T = (Table) loadFileDyn(tablepath);
 		if (T.getIndexes().contains(ColumnName)) {
-			String LHTPath = "data/tables/" + strTable + "/"
-					+ "hashtable/" + ColumnName + ".bin";
+			String LHTPath = "data/tables/" + strTable + "/" + "hashtable/"
+					+ ColumnName + ".bin";
 			// LinearHashtable L = (LinearHashtable)
 			// deserialize(LHTPath);
 			LinearHashtable L = (LinearHashtable) loadFileDyn(LHTPath);
@@ -467,15 +468,15 @@ public class DBApp {
 				Page p = (Page) loadFileDyn(RecordPath);
 				Hashtable<String, String> r = p.getRecord(ColumnName,
 						ColumnValue);
-					result.add(r);
+				result.add(r);
 			}
 
 		} else {
 			Iterator PagesI = T.getAllPages().iterator();
 			while (PagesI.hasNext()) {
 				String Pname = (String) PagesI.next();
-				String PagePath = "data/tables/" + strTable + "/"
-						+ "pages/" + Pname + ".class";
+				String PagePath = "data/tables/" + strTable + "/" + "pages/"
+						+ Pname + ".class";
 				// Page p = (Page) deserialize(PagePath);
 				Page p = (Page) loadFileDyn(PagePath);
 				Hashtable<String, String> r = p.getRecord(ColumnName,
@@ -492,6 +493,7 @@ public class DBApp {
 		}
 		return result;
 	}
+
 	public static Iterator selectRangeFromTableV2(String strTable,
 			Hashtable<String, String> htblColNameValue, String strOperator) throws ClassNotFoundException, IOException{
 		ArrayList result = new ArrayList();
@@ -589,7 +591,7 @@ public class DBApp {
 		return null;
 		
 	}
-	
+
 	public static Iterator selectValueFromTableV2(String strTable,
 			Hashtable<String, String> htblColNameValue, String strOperator)
 			throws DBEngineException, ClassNotFoundException, IOException {
@@ -604,11 +606,13 @@ public class DBApp {
 				String ColumnName = (String) coloumnsI.next();
 				System.out.println(ColumnName); // major
 				String ColumnValue = htblColNameValue.get(ColumnName);
-				tempresult=(SelectValueQueryOneCondition(strTable, ColumnName, ColumnValue));
-				Iterator tempresultI=tempresult.iterator();
-				while(tempresultI.hasNext()){
-					Hashtable<String, String> record =(Hashtable<String, String>) tempresultI.next();
-					if(!result.contains(record))
+				tempresult = (SelectValueQueryOneCondition(strTable,
+						ColumnName, ColumnValue));
+				Iterator tempresultI = tempresult.iterator();
+				while (tempresultI.hasNext()) {
+					Hashtable<String, String> record = (Hashtable<String, String>) tempresultI
+							.next();
+					if (!result.contains(record))
 						result.add(record);
 				}
 			}
@@ -623,11 +627,13 @@ public class DBApp {
 				String ColumnName = (String) coloumnsI.next();
 				String ColumnValue = htblColNameValue.get(ColumnName);
 				if (flag == false) {
-					tempresult=(SelectValueQueryOneCondition(strTable, ColumnName, ColumnValue));
-					Iterator tempresultI=tempresult.iterator();
-					while(tempresultI.hasNext()){
-						Hashtable<String, String> record =(Hashtable<String, String>) tempresultI.next();
-						if(!result.contains(record))
+					tempresult = (SelectValueQueryOneCondition(strTable,
+							ColumnName, ColumnValue));
+					Iterator tempresultI = tempresult.iterator();
+					while (tempresultI.hasNext()) {
+						Hashtable<String, String> record = (Hashtable<String, String>) tempresultI
+								.next();
+						if (!result.contains(record))
 							result.add(record);
 					}
 					flag = true;
@@ -662,22 +668,21 @@ public class DBApp {
 			ClassNotFoundException, DBEngineException {
 
 		// test save all by doing the following : go to ===>
-/*
-		init();
-
-		Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
-		htblColNameType.put("col1", "str");
-		htblColNameType.put("col2", "int");
-		htblColNameType.put("col3", "int");
-		htblColNameType.put("col4", "str");
-
-		Hashtable<String, String> htblColNameRefs = new Hashtable<String, String>();
-		htblColNameRefs.put("col1", "table1.id");
-
-		// ===> execute once and comment createTable and execute multiple times
-		createTable("testAll", htblColNameType, htblColNameRefs, "col2");
-		*/
-
+		/*
+		 * init();
+		 * 
+		 * Hashtable<String, String> htblColNameType = new Hashtable<String,
+		 * String>(); htblColNameType.put("col1", "str");
+		 * htblColNameType.put("col2", "int"); htblColNameType.put("col3",
+		 * "int"); htblColNameType.put("col4", "str");
+		 * 
+		 * Hashtable<String, String> htblColNameRefs = new Hashtable<String,
+		 * String>(); htblColNameRefs.put("col1", "table1.id");
+		 * 
+		 * // ===> execute once and comment createTable and execute multiple
+		 * times createTable("testAll", htblColNameType, htblColNameRefs,
+		 * "col2");
+		 */
 		// createIndex("testAll", "col3");
 
 		// Clean csv file
@@ -694,19 +699,16 @@ public class DBApp {
 		 * (Table)os.readObject(); System.out.println(x.getTableName());
 		 * os.close(); fi.close();
 		 */
-
-		/*for (int i = 0; i < 200; i++) {
-			Hashtable<String, String> insertion = new Hashtable<String, String>();
-			insertion.put("col1", "str");
-			insertion.put("col2", "int");
-			insertion.put("col3", "int");
-			insertion.put("col4", "str");
-
-			insertIntoTable("testAll", insertion);
-		}
-
-		saveAll();
-*/
+		/*
+		 * for (int i = 0; i < 300; i++) { Hashtable<String, String> insertion =
+		 * new Hashtable<String, String>(); insertion.put("col1", "str");
+		 * insertion.put("col2", "int"); insertion.put("col3", "int");
+		 * insertion.put("col4", "str");
+		 * 
+		 * insertIntoTable("testAll", insertion); }
+		 * 
+		 * saveAll();
+		 */
 		/*
 		 * Hashtable<String, String> insertion = new Hashtable<String,
 		 * String>(); insertion.put("col1", "str"); insertion.put("col2",
@@ -850,35 +852,54 @@ public class DBApp {
 		 * while (I.hasNext()) { System.out.println("done " +
 		 * I.next().toString()); }
 		 */
-		init();
-				  Hashtable<String, String> insertion = new Hashtable<String,
-				  String>(); insertion.put("name", "omar"); insertion.put("age", "2");
-				  insertion.put("ID", "2810999"); insertion.put("major", "cs");
-				  
-				  insertIntoTable("testValueV2", insertion);
-				 
-				  insertion = new Hashtable<String, String>(); insertion.put("name",
-				  "hossam"); insertion.put("age", "3"); insertion.put("ID", "286205");
-				  insertion.put("major", "cs");
-				  
-				  insertIntoTable("testValueV2", insertion);
-				  
-				  insertion = new Hashtable<String, String>(); insertion.put("name",
-				  "kareem"); insertion.put("age", "5"); insertion.put("ID", "2810989");
-				  insertion.put("major", "DMET");
-				  
-				  insertIntoTable("testValueV2", insertion);
-				  //createIndex("testValueV2", "age");
 
-				  
-				  Hashtable<String, String> htblColNameRange = new Hashtable<String, String>();
-					 htblColNameRange.put("age", ">=3");
-					  htblColNameRange.put("ID", "<9");
-					 Iterator I = selectRangeFromTableV2("testValueV2", htblColNameRange, "AND");
-					// Iterator I = SelectRangeOneCondition("testValueV2", "ID","<9").iterator();
-					 while (I.hasNext()) { System.out.println("done " +
-					 I.next().toString()); }
-		
+
+		// test V2
+
+		/*
+		 * init();
+		 * 
+		 * Hashtable<String, String> htblColNameType = new Hashtable<String,
+		 * String>(); htblColNameType.put("name", "str");
+		 * htblColNameType.put("age", "int"); htblColNameType.put("ID", "int");
+		 * htblColNameType.put("major", "str");
+		 * 
+		 * Hashtable<String, String> htblColNameRefs = new Hashtable<String,
+		 * String>();
+		 * 
+		 * createTable("testValueV2", htblColNameType, htblColNameRefs, "ID");
+		 * 
+		 * Hashtable<String, String> insertion = new Hashtable<String,
+		 * String>(); insertion.put("name", "omar"); insertion.put("age", "2");
+		 * insertion.put("ID", "2810999"); insertion.put("major", "cs");
+		 * 
+		 * insertIntoTable("testValueV2", insertion);
+		 * 
+		 * insertion = new Hashtable<String, String>(); insertion.put("name",
+		 * "hossam"); insertion.put("age", "3"); insertion.put("ID", "286205");
+		 * insertion.put("major", "cs");
+		 * 
+		 * insertIntoTable("testValueV2", insertion);
+		 * 
+		 * insertion = new Hashtable<String, String>(); insertion.put("name",
+		 * "kareem"); insertion.put("age", "5"); insertion.put("ID", "2810989");
+		 * insertion.put("major", "DMET");
+		 * 
+		 * insertIntoTable("testValueV2", insertion);
+		 * 
+		 * 
+		 * 
+		 * Hashtable<String, String> htblColNameRange = new Hashtable<String,
+		 * String>(); htblColNameRange.put("age", "<286205"); //
+		 * htblColNameRange.put("age","5"); // htblColNameRange.put("name",
+		 * "omar"); Iterator I = selectRangeFromTable("testValueV2",
+		 * htblColNameRange, "OR");
+		 * 
+		 * while (I.hasNext()) { System.out.println("done " +
+		 * I.next().toString()); }
+		 */
+
+
 
 	}
 }

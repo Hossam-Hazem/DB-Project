@@ -38,10 +38,6 @@ public class Page implements Serializable {
 		return true;
 	}
 
-	public static void main(String[] args) throws IOException {
-		new Page("0");
-	}
-
 	public int getMaximumRowsCountinPage() {
 		return MaximumRowsCountinPage;
 	}
