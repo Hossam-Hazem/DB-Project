@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -8,7 +7,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Array;
-import java.sql.Savepoint;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -829,9 +830,45 @@ public class DBApp {
 		return null;
 
 	}
+	
+	public static boolean validInput(String strTableName, Hashtable<String, String> htblColNameValue) throws IOException, NoSuchFieldException, SecurityException, ClassNotFoundException {
+		
+		// contains column names and column types of input table
+		Hashtable<String, String> original = new Hashtable<String, String>();
+		String currentLine = "";
+		FileReader fileReader = new FileReader("data/metadata.csv");
+		BufferedReader br = new BufferedReader(fileReader);
+		while ((currentLine = br.readLine()) != null) {
+			String[] result = currentLine.split(", ");
+			if(result[0].equals(strTableName)){
+				original.put(result[1], result[2]);
+			}
+		}
+		Set set = htblColNameValue.entrySet();
+		Iterator it = set.iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry) it.next();
+			
+			System.out.println(entry.getKey() + " : " + entry.getValue());
+			if(!original.containsKey(entry.getKey())){
+				
+				System.out.println("let's dance");
+				return false;
+			}
+			
+		}
+		
+		
+		
+		
+		
+		// TO BE REMOVED
+		return true;
+		
+	}
 
 	public static void main(String[] args) throws IOException, DBAppException,
-			ClassNotFoundException, DBEngineException {
+			ClassNotFoundException, DBEngineException, NoSuchFieldException, SecurityException, InstantiationException, IllegalAccessException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
 
 		// test save all by doing the following : go to ===>
 /*
@@ -1022,6 +1059,7 @@ public class DBApp {
 		 * while (I.hasNext()) { System.out.println("done " +
 		 * I.next().toString()); }
 		 */
+		/*
 		init();
 
 		Hashtable<String, String> htblColNameType = new Hashtable<String,
@@ -1062,7 +1100,53 @@ public class DBApp {
 					 
 					 while (I.hasNext()) { System.out.println("done " +
 					 I.next().toString()); }
-		
+					 */
+		/*
+		Hashtable<String, String> htblColNameRange = new Hashtable<String, String>();
+		 htblColNameRange.put("age", "<286205");
+		 validInput("testAll", htblColNameRange);
+		*/ 
+		 /*
+		 String strColType = "java.lang.Integer";
+		 String strColValue = "100";
+		 Class x = Class.forName( strColType );
+		 System.out.println(x);
+		 Constructor constructor =
+			        x.getConstructor(new Class[]{String.class});
+		 Class[] parameterTypes = constructor.getParameterTypes();
+		 System.out.println("Mark my words: " + constructor);
+		 for (int i = 0; i < parameterTypes.length; i++) {
+			System.out.println(parameterTypes[i]);
+		}
+		 */
+		 //---------------------------------------------------------------
+		 // valid input test
+		/*
+		init();
+		Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
+		htblColNameType.put("name", "java.lang.String");
+		htblColNameType.put("age", "java.lang.Integer");
+		htblColNameType.put("ID", "java.lang.Integer");
+		htblColNameType.put("major", "java.lang.String");
+
+		Hashtable<String, String> htblColNameRefs = new Hashtable<String, String>();
+
+		createTable("testValidInput", htblColNameType, htblColNameRefs, "ID");
+		*/
+		/*
+		Hashtable<String, String> htblColNameRange = new Hashtable<String, String>();
+		htblColNameRange.put("name", "omar"); 
+		htblColNameRange.put("hh", "50000");
+		 validInput("testValidInput", htblColNameRange);
+		 */
+		String strColType = "java.lang.Integer";
+		 String strColValue = "100";
+		 Class x = Class.forName( strColType );
+		 System.out.println(x);
+		 //Constructor constructor = x.;
+		 Object y =  x.getDeclaredConstructor(String.class).newInstance(strColValue);
+		 System.out.println(y);
+		 //System.out.println(constructor);
 
 	}
 }
