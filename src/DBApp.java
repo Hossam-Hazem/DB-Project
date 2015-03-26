@@ -831,7 +831,7 @@ public class DBApp {
 
 	}
 	
-	public static boolean validInput(String strTableName, Hashtable<String, String> htblColNameValue) throws IOException, NoSuchFieldException, SecurityException, ClassNotFoundException {
+	public static boolean isValidInput(String strTableName, Hashtable<String, String> htblColNameValue) throws IOException, NoSuchFieldException, SecurityException, ClassNotFoundException {
 		
 		// contains column names and column types of input table
 		Hashtable<String, String> original = new Hashtable<String, String>();
@@ -1143,7 +1143,6 @@ public class DBApp {
 		 String strColValue = "100";
 		 Class x = Class.forName( strColType );
 		 System.out.println(x);
-		 //Constructor constructor = x.;
 		 Object y =  x.getDeclaredConstructor(String.class).newInstance(strColValue);
 		 System.out.println(y);
 		 //System.out.println(constructor);
