@@ -663,7 +663,43 @@ public class DBApp {
 		return null;
 
 	}
-
+	
+public static boolean isValidInput(String strTableName, Hashtable<String, String> htblColNameValue) throws IOException, NoSuchFieldException, SecurityException, ClassNotFoundException {
+		
+		// contains column names and column types of input table
+		Hashtable<String, String> original = new Hashtable<String, String>();
+		String currentLine = "";
+		FileReader fileReader = new FileReader("data/metadata.csv");
+		BufferedReader br = new BufferedReader(fileReader);
+		while ((currentLine = br.readLine()) != null) {
+			String[] result = currentLine.split(", ");
+			if(result[0].equals(strTableName)){
+				original.put(result[1], result[2]);
+			}
+		}
+		Set set = htblColNameValue.entrySet();
+		Iterator it = set.iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry) it.next();
+			
+			System.out.println(entry.getKey() + " : " + entry.getValue());
+			if(!original.containsKey(entry.getKey())){
+				
+				System.out.println("let's dance");
+				return false;
+			}
+			
+		}
+		
+		
+		
+		
+		
+		// TO BE REMOVED
+		return true;
+		
+	}
+	
 	public static void main(String[] args) throws IOException, DBAppException,
 			ClassNotFoundException, DBEngineException {
 
