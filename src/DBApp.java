@@ -452,10 +452,11 @@ public class DBApp {
 		// Table T = (Table) deserialize(tablepath);
 		Table T = (Table) loadFileDyn(tablepath);
 		Iterator coloumnsI = htblColNameRange.keySet().iterator();
+
 		if (strOperator.equals("OR")) {
 			while (coloumnsI.hasNext()) {
 				String ColumnName = (String) coloumnsI.next();
-				System.out.println(ColumnName); // major
+				// System.out.println(ColumnName); // major
 				String ColumnAllValue = htblColNameRange.get(ColumnName);
 				String Columnrange = getOperator(ColumnAllValue);
 				String ColumnValue;
@@ -464,11 +465,7 @@ public class DBApp {
 				} else {
 					ColumnValue = ColumnAllValue.substring(2);
 				}
-				if (Columnrange.length() == 1)// low kan one m3nah la greater
-												// than la smaller than
-					ColumnValue = ColumnAllValue.substring(1);
-				else
-					ColumnValue = ColumnAllValue.substring(2);
+
 				if (T.getIndexes().contains(ColumnName)) {
 					String BTreePath = "data/tables/" + strTable + "/"
 							+ "BTree/" + ColumnName + ".bin";
@@ -617,51 +614,73 @@ public class DBApp {
 				return result.iterator();
 			}
 		}
-		/*
-		 * if (strOperator.equals("AND")) { boolean flag = false; while
-		 * (coloumnsI.hasNext()) { String ColumnName = (String)
-		 * coloumnsI.next(); String ColumnValue =
-		 * htblColNameValue.get(ColumnName); if (flag == false) { if
-		 * (T.getIndexes().contains(ColumnName)) { String LHTPath =
-		 * "data/tables/" + strTable + "/" + "hashtable/" + ColumnName + ".bin";
-		 * LinearHashtable L = (LinearHashtable) deserialize(LHTPath); String
-		 * RecordPath = (String) L.get(ColumnValue); if (RecordPath != null) {
-		 * Page p = (Page) deserialize(RecordPath); Hashtable<String, String> r
-		 * = p.getRecord( ColumnName, ColumnValue); result.add(r);
-		 * 
-		 * }
-		 * 
-		 * } else { Iterator PagesI = T.getAllPages().iterator(); while
-		 * (PagesI.hasNext()) { String Pname = (String) PagesI.next(); String
-		 * PagePath = "data/tables/" + strTable + "/" + "pages/" + Pname +
-		 * ".class"; Page p = (Page) deserialize(PagePath); Hashtable<String,
-		 * String> r = p.getRecord( ColumnName, ColumnValue);
-		 * ArrayList<Hashtable<String, String>> allRecordsInPage = p
-		 * .getRecords(); for (int i = 0; i < allRecordsInPage.size(); i++) { if
-		 * (allRecordsInPage.get(i).get(ColumnName) .equals(ColumnValue)) {
-		 * result.add(allRecordsInPage.get(i));
-		 * System.out.println("while in OR works"); } } // // if (r != null)
-		 * result.add(r); // //* System.out.println(r.get("name")); //*
-		 * 
-		 * } }
-		 * 
-		 * flag = true; } else { // low flag mesh be false i.e. mesh 2wl
-		 * iteration // 3lshan yeloop 3ala result mesh database // 3lshan // AND
-		 * kan nefse 23mlha recursion <3
-		 * 
-		 * ArrayList temp = new ArrayList(); temp = (ArrayList) result.clone();
-		 * Iterator ResultI = temp.iterator(); while (ResultI.hasNext()) {
-		 * Hashtable<String, String> Record = (Hashtable<String, String>)
-		 * ResultI .next(); if (!Record.get(ColumnName).equals(ColumnValue))
-		 * result.remove(Record);
-		 * 
-		 * } }
-		 * 
-		 * } for (int i = 0; i < result.size(); i++) {
-		 * System.out.println(result.get(i)); }
-		 * 
-		 * return result.iterator(); }
-		 */
+
+		if (strOperator.equals("AND")) {
+			boolean flag = false;
+			while (coloumnsI.hasNext()) {
+				String ColumnName = (String) coloumnsI.next();
+				// System.out.println(ColumnName); // major
+				String ColumnAllValue = htblColNameRange.get(ColumnName);
+				String Columnrange = getOperator(ColumnAllValue);
+				String ColumnValue;
+				if (Columnrange.length() == 1) {
+					ColumnValue = ColumnAllValue.substring(1);
+				} else {
+					ColumnValue = ColumnAllValue.substring(2);
+				}
+
+				if (flag == false) {
+					Hashtable<String, String> htblColNameRangetemp = new Hashtable<String, String>();
+					htblColNameRangetemp.put(ColumnName, ColumnAllValue);
+					result = (ArrayList) selectRangeFromTable(strTable,
+							htblColNameRangetemp, "OR");
+					flag = true;
+				} else { // low flag mesh be false i.e. mesh 2wl iteration
+							// 3lshan yeloop 3ala result mesh database 3lshan
+							// AND kan nefse 23mlha recursion <3
+
+					ArrayList temp = new ArrayList();
+					temp = (ArrayList) result.clone();
+					Iterator ResultI = temp.iterator();
+					ArrayList tempresult = new ArrayList();
+					while (ResultI.hasNext()) {
+						Hashtable<String, String> Record = (Hashtable<String, String>) ResultI
+								.next();
+						if (Columnrange.charAt(1) == '=') {
+							if (Record.get(ColumnName).compareTo(ColumnValue) != 0)
+								if (Columnrange.charAt(0) == '>') {
+									if (Record.get(ColumnName).compareTo(
+											ColumnValue) < 0)
+										result.remove(Record);
+								}
+							if (Columnrange.charAt(0) == '<') {
+								if (Record.get(ColumnName).compareTo(
+										ColumnValue) > 0)
+									result.remove(Record);
+							}
+						} else {
+							if (Columnrange.charAt(0) == '>') {
+								if (Record.get(ColumnName).compareTo(
+										ColumnValue) <= 0)
+									result.remove(Record);
+							}
+							if (Columnrange.charAt(0) == '<') {
+								if (Record.get(ColumnName).compareTo(
+										ColumnValue) >= 0)
+									result.remove(Record);
+							}
+						}
+
+					}
+				}
+
+			}
+			for (int i = 0; i < result.size(); i++) {
+				System.out.println(result.get(i));
+			}
+
+			return result.iterator();
+		}
 
 		return null;
 
