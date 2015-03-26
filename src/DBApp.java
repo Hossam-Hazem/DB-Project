@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -701,7 +702,7 @@ public static boolean isValidInput(String strTableName, Hashtable<String, String
 	}
 	
 	public static void main(String[] args) throws IOException, DBAppException,
-			ClassNotFoundException, DBEngineException {
+			ClassNotFoundException, DBEngineException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 
 		// test save all by doing the following : go to ===>
 		/*
@@ -934,7 +935,14 @@ public static boolean isValidInput(String strTableName, Hashtable<String, String
 		 * while (I.hasNext()) { System.out.println("done " +
 		 * I.next().toString()); }
 		 */
-
+		
+		String strColType = "java.lang.Integer";
+		 String strColValue = "100";
+		 Class x = Class.forName( strColType );
+		 System.out.println(x);
+		 //Constructor constructor = x.;
+		 Object y =  x.getDeclaredConstructor(String.class).newInstance(strColValue);
+		 System.out.println(y);
 
 
 	}
