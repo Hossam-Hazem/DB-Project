@@ -1174,19 +1174,6 @@ public class DBApp {
 		  while (I.hasNext()) { System.out.println("done " +
 		  I.next().toString()); }
 		  */
-		init();
-		Page p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
-		System.out.println("All Records: " + p.getRecords());
-
-		// Nothing will be returned... AND
-		Hashtable<String, String> select = new Hashtable<String, String>();
-		select.put("ID", ">3");
-		Iterator I = selectRangeFromTableV2("testCreateTable", select,
-				"OR");
-
-		while (I.hasNext()) {
-			System.out.println("done " + I.next().toString());
-		}
 		
 	}
 }
