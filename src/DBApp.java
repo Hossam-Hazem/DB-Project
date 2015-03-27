@@ -580,7 +580,7 @@ public class DBApp {
 		ArrayList tempresult = new ArrayList();
 		String tablepath = "data/tables/" + strTable + "/" + strTable + ".bin";
 		// Table T = (Table) deserialize(tablepath);
-		Table T = (Table) loadFileDyn(tablepath);
+		Table T = new Table(strTable);
 		Iterator coloumnsI = htblColNameValue.keySet().iterator();
 		if (strOperator.equals("OR")) {
 			while (coloumnsI.hasNext()) {
