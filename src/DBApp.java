@@ -167,7 +167,7 @@ public class DBApp {
 			for (int j = 0; j < P.getRowsCounter(); j++) {
 				Hashtable<String, String> r = AllRecords.get(j);
 				String c = r.get(strColName);
-				B.put(c, Pagepath);
+				B.put((Comparable) getValueIfValid(strTableName, strColName, c), Pagepath);
 				L.put(c, Pagepath);
 			}
 
@@ -246,7 +246,8 @@ public class DBApp {
 				// LinearHashtable L = (LinearHashtable) deserialize(LHTPath);
 				LinearHashtable L = (LinearHashtable) loadFileDyn(LHTPath);
 				String value = htblColNameValue.get(index);
-				B.put(value, currentPagepath);
+				Comparable O = (Comparable) getValueIfValid(strTableName, index, value);
+				B.put(O , currentPagepath);
 				L.put(value, currentPagepath);
 				// serialize(LHTPath, L);
 				virtualDirectory.put(LHTPath, L);
@@ -1048,9 +1049,51 @@ public class DBApp {
 		*/
 		//---------------------------------------------------------------------------------
 		// test getValueIfValid
-		System.out.println(getValueIfValid("testIsValid2", "age", "20"));
-		System.out.println(getValueIfValid("testIsValid2", "age", "omar"));
-		System.out.println(getValueIfValid("testIsValid2", "name", "omar"));
+		init();
+		Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
+		htblColNameType.put("name", "java.lang.String");
+		htblColNameType.put("age", "java.lang.Integer");
+		htblColNameType.put("ID", "java.lang.Long");
+		htblColNameType.put("major", "java.lang.String");
+
+		Hashtable<String, String> htblColNameRefs = new Hashtable<String, String>();
+
+		createTable("testvalueRange", htblColNameType, htblColNameRefs, "age");
+		
+		  Hashtable<String, String> insertion = new Hashtable<String,
+		  String>(); insertion.put("name", "omar"); insertion.put("age", "2");
+		  insertion.put("ID", "2810999"); insertion.put("major", "cs");
+		  
+		  insertIntoTable("testvalueRange", insertion);
+		  
+		  insertion = new Hashtable<String, String>(); insertion.put("name",
+		  "hossam"); insertion.put("age", "3"); insertion.put("ID", "286205");
+		  insertion.put("major", "cs");
+		  
+		  insertIntoTable("testvalueRange", insertion);
+		  
+		  insertion = new Hashtable<String, String>(); insertion.put("name",
+		  "kareem"); insertion.put("age", "5"); insertion.put("ID", "2810989");
+		  insertion.put("major", "DMET");
+		  
+		  insertIntoTable("testvalueRange", insertion);
+		  
+		  
+		  
+		  Hashtable<String, String> htblColNameRange = new Hashtable<String,
+		  String>();
+		  createIndex("testvalueRange", "ID");
+		  //htblColNameRange.put("age", "<286205"); //
+		  htblColNameRange.put("ID","<286205"); 
+		 // htblColNameRange.put("name", "omar");
+		 // htblColNameRange.put("major", "cs");
+		 // deleteFromTable("testDeleteV21", htblColNameRange, "OR");
+		//  htblColNameRange.put("major", "cs");
+		  Iterator I = selectRangeFromTableV2("testvalueRange",
+		  htblColNameRange, "OR");
+		  
+		  while (I.hasNext()) { System.out.println("done " +
+		  I.next().toString()); }
 		
 	}
 }
