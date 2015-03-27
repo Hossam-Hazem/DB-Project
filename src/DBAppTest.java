@@ -110,9 +110,9 @@ public class DBAppTest {
 		
 		
 		Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
-		//htblColNameValue.put("major", "scs");
+		
 		htblColNameValue.put("ID", "202020");
-		//htblColNameValue.put("name", "student2");
+		htblColNameValue.put("name", "student2");
 		
 		testingAll.deleteFromTable("testCreateTable", htblColNameValue, "AND");
 	

@@ -21,7 +21,7 @@ public class DBApp {
 	static Hashtable<String, Object> virtualDirectory;
 
 
-	public  void init() {
+	public void init() {
 		virtualDirectory = new Hashtable<String, Object>();
 	}
 
