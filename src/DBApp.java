@@ -20,7 +20,7 @@ public class DBApp {
 	static String tempTabe;
 	static Hashtable<String, Object> virtualDirectory;
 
-	private static void init() {
+	public static void init() {
 		virtualDirectory = new Hashtable<String, Object>();
 	}
 
@@ -1107,4 +1107,4 @@ public class DBApp {
 // Edit already exists and call it in create table -----> Kareem 
 //Edit is valid input and call it in create table -----> Kareem 
 //Edit get value if valid and call it in create table -----> Kareem 
-
+// Look at last point in pdf
