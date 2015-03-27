@@ -140,17 +140,14 @@ public class DBApp {
 
 	public static boolean alreadyExist(String strTableName) throws IOException {
 		boolean found = false;
-		String currentLine = "";
-		FileReader fileReader = new FileReader("data/metadata.csv");
-		BufferedReader br = new BufferedReader(fileReader);
-		while ((currentLine = br.readLine()) != null) {
-			String[] result = currentLine.split(", ");
+		String[] br = ((String) readMetaFromDisk()).split("\n");
+		for (String line : br) {
+			String[] result = line.split(", ");
 			if (result[0].equals(strTableName)) {
 				found = true;
 				break;
 			}
 		}
-		br.close();
 		return found;
 
 	}
@@ -158,35 +155,32 @@ public class DBApp {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void createIndex(String strTableName, String strColName)
 			throws DBAppException, IOException, ClassNotFoundException {
-		String currentLine = "";
-		FileReader fileReader = new FileReader("data/metadata.csv");
-		BufferedReader br = new BufferedReader(fileReader);
+
 		ArrayList<String[]> x = new ArrayList<String[]>();
 
-		while ((currentLine = br.readLine()) != null) {
-			String[] temp = currentLine.split(", ");
+		String[] br = ((String) readMetaFromDisk()).split("\n");
+		for (String line : br) {
+			String[] temp = line.split(", ");
 			x.add(temp);
 		}
-		FileWriter fileWriter = new FileWriter("data/metadata.csv");
+
+		String MetaInfo = "";
 		for (int i = 0; i < x.size(); i++) {
 			if (x.get(i)[0].equals(strTableName)
 					&& x.get(i)[1].equals(strColName)) {
-				fileWriter.append(x.get(i)[0] + ", " + x.get(i)[1] + ", "
+				MetaInfo += (x.get(i)[0] + ", " + x.get(i)[1] + ", "
 						+ x.get(i)[2] + ", " + x.get(i)[3] + ", " + "true"
 						+ ", " + x.get(i)[5] + "\n");
 			} else {
-				fileWriter.append(x.get(i)[0] + ", " + x.get(i)[1] + ", "
+				MetaInfo += (x.get(i)[0] + ", " + x.get(i)[1] + ", "
 						+ x.get(i)[2] + ", " + x.get(i)[3] + ", " + x.get(i)[4]
 						+ ", " + x.get(i)[5] + "\n");
 			}
 		}
-		br.close();
-		fileWriter.close();
-		// //Indexing
-		// String Tablepath = "data/tables/" + strTableName + "/" + strTableName
-		// + ".bin";
-		// Table T = (Table) deserialize(Tablepath);
-		// Table T = (Table) loadFileDyn(Tablepath);
+
+		writeMeta(MetaInfo);
+
+		// Indexing
 		Table T = new Table(strTableName);
 		T.addIndextoArray(strColName);
 		BTree B = new BTree();
@@ -754,16 +748,15 @@ public class DBApp {
 
 		// contains column names and column types of input table
 		Hashtable<String, String> original = new Hashtable<String, String>();
-		String currentLine = "";
-		FileReader fileReader = new FileReader("data/metadata.csv");
-		BufferedReader br = new BufferedReader(fileReader);
-		while ((currentLine = br.readLine()) != null) {
-			String[] result = currentLine.split(", ");
+		String[] br = ((String) readMetaFromDisk()).split("\n");
+		for (String line : br) {
+			String[] result = line.split(", ");
 			if (result[0].equals(strTableName)) {
 				original.put(result[1], result[2]);
 				// System.out.println(result[1] + ": " + result[2]);
 			}
 		}
+
 		Set set = htblColNameValue.entrySet();
 		Iterator it = set.iterator();
 		while (it.hasNext()) {
@@ -807,11 +800,9 @@ public class DBApp {
 	public static Object getValueIfValid(String tableName, String columnName,
 			String value) throws IOException, ClassNotFoundException {
 		Hashtable<String, String> original = new Hashtable<String, String>();
-		String currentLine = "";
-		FileReader fileReader = new FileReader("data/metadata.csv");
-		BufferedReader br = new BufferedReader(fileReader);
-		while ((currentLine = br.readLine()) != null) {
-			String[] result = currentLine.split(", ");
+		String[] br = ((String) readMetaFromDisk()).split("\n");
+		for (String line : br) {
+			String[] result = line.split(", ");
 			if (result[0].equals(tableName)) {
 				original.put(result[1], result[2]);
 				// System.out.println(result[1] + ": " + result[2]);
