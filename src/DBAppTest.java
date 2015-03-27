@@ -1,5 +1,9 @@
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Hashtable;
+
+import BPTree.BTree;
 
 
 public class DBAppTest {
@@ -74,8 +78,57 @@ public class DBAppTest {
 		insertion.put("major", "cs");
 		insertion.put("ID", "10101010");
 		testingAll.insertIntoTable("testCreateTable", insertion);
+		
+		insertion.put("name", "student2");
+		insertion.put("age", "30");
+		insertion.put("major", "cs");
+		insertion.put("ID", "20202020");
+		testingAll.insertIntoTable("testCreateTable", insertion);
+		
+		insertion.put("name", "student3");
+		insertion.put("age", "40");
+		insertion.put("major", "DMET");
+		insertion.put("ID", "30303030");
+		testingAll.insertIntoTable("testCreateTable", insertion);
 		testingAll.saveAll();
+		Page p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
+		System.out.println("All Records: " + p.getRecords());
 		*/
 		
+		//----------------------------------------------------------------------------------------
+		
+		// deleteFromTable Test
+		
+		testingAll.init();
+		Page p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
+		System.out.println("All Records: " + p.getRecords());
+
+		BTree x = (BTree) deserialize("data/tables/testCreateTable/BTree/ID.bin");
+		x.print();
+		
+		// NO Effect
+		Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
+		htblColNameValue.put("ID", "10101010");
+		htblColNameValue.put("name", "student2");
+		testingAll.deleteFromTable("testCreateTable", htblColNameValue, "OR");
+
+		p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
+		System.out.println("All Records: " + p.getRecords());
+
+		x = (BTree) deserialize("data/tables/testCreateTable/BTree/ID.bin");
+		x.print();
+		testingAll.saveAll();
+
+		
+	}	
+	public static Object deserialize(String path) throws IOException,
+			ClassNotFoundException {
+		FileInputStream fi = new FileInputStream(path);
+		ObjectInputStream os = new ObjectInputStream(fi);
+		Object x = os.readObject();
+		// System.out.println(((Page)x).getRecords().get(0));
+		os.close();
+		fi.close();
+		return x;
 	}
 }
