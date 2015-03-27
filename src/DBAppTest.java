@@ -70,7 +70,7 @@ public class DBAppTest {
 		*/
 		
 		// Right Insertion... Page created... Record Added to page, table, tree
-		/*
+		
 		testingAll.init();
 		Hashtable<String, String> insertion = new Hashtable<String, String>();
 		insertion.put("name", "student");
@@ -79,26 +79,28 @@ public class DBAppTest {
 		insertion.put("ID", "10101010");
 		testingAll.insertIntoTable("testCreateTable", insertion);
 		
-		insertion.put("name", "student2");
-		insertion.put("age", "30");
-		insertion.put("major", "cs");
-		insertion.put("ID", "20202020");
-		testingAll.insertIntoTable("testCreateTable", insertion);
+		Hashtable<String, String> insertion2 = new Hashtable<String, String>();
+		insertion2.put("name", "student2");
+		insertion2.put("age", "30");
+		insertion2.put("major", "cs");
+		insertion2.put("ID", "20202020");
+		testingAll.insertIntoTable("testCreateTable", insertion2);
 		
-		insertion.put("name", "student3");
-		insertion.put("age", "40");
-		insertion.put("major", "DMET");
-		insertion.put("ID", "30303030");
-		testingAll.insertIntoTable("testCreateTable", insertion);
+		Hashtable<String, String> insertion3 = new Hashtable<String, String>();
+		insertion3.put("name", "student3");
+		insertion3.put("age", "40");
+		insertion3.put("major", "DMET");
+		insertion3.put("ID", "30303030");
+		testingAll.insertIntoTable("testCreateTable", insertion3);
 		testingAll.saveAll();
 		Page p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
 		System.out.println("All Records: " + p.getRecords());
-		*/
+		
 		
 		//----------------------------------------------------------------------------------------
 		
 		// deleteFromTable Test
-		
+		/*
 		testingAll.init();
 		Page p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
 		System.out.println("All Records: " + p.getRecords());
@@ -118,7 +120,7 @@ public class DBAppTest {
 		x = (BTree) deserialize("data/tables/testCreateTable/BTree/ID.bin");
 		x.print();
 		testingAll.saveAll();
-
+*/
 		
 	}	
 	public static Object deserialize(String path) throws IOException,

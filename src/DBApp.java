@@ -20,7 +20,7 @@ public class DBApp {
 	static String tempTabe;
 	static Hashtable<String, Object> virtualDirectory;
 
-	public static void init() {
+	static void init() {
 		virtualDirectory = new Hashtable<String, Object>();
 	}
 
