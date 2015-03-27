@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Enumeration;
 
 import BPTree.BTree;
 
@@ -33,7 +34,7 @@ public class Table implements Serializable {
 
 		this.allPages = getPages();
 		this.nameCounter = getNameCounter(this.allPages);
-		this.Indexes = getIndexesFromDisk();
+		this.Indexes = getAllIndexes();
 	}
 
 	public Table(String tableNameToBeRetrieved) throws IOException {
@@ -45,7 +46,7 @@ public class Table implements Serializable {
 
 		this.allPages = getPages();
 		this.nameCounter = getNameCounter(this.allPages);
-		this.Indexes = getIndexesFromDisk();
+		this.Indexes = getAllIndexes();
 	}
 
 	private void makeTableFolders(String PrimaryKey) throws IOException {
@@ -70,7 +71,7 @@ public class Table implements Serializable {
 		if (!saveDir.exists()) {
 			saveDir.mkdirs();
 		}
-		DBApp.virtualDirectory.put(path, this);
+		//DBApp.virtualDirectory.put(path, this);
 		BTree T = new BTree();
 		path = "data/tables/" + tableName + "/BTree/" + PrimaryKey + ".bin";
 		// serialize(path, T);
@@ -97,31 +98,56 @@ public class Table implements Serializable {
 	}
 
 	public ArrayList<String> getPages() {
+
 		ArrayList<String> pages = new ArrayList<>();
+
+		Enumeration dirs = DBApp.virtualDirectory.keys();
+		while (dirs.hasMoreElements()) {
+			String dirName = (String) dirs.nextElement();
+			if (dirName.indexOf(pagesDirectory) == 0) {
+				String tmp = dirName.replace(pagesDirectory + "/", "");
+				pages.add(tmp.substring(0, tmp.length() - 6));
+			}
+		}
+
+		// pagesDirectory;
 		File file = new File(pagesDirectory);
 		if (file.exists() && file.isDirectory()) {
 			File[] list = file.listFiles();
 			// for each item in the list
 			for (File file1 : list) {
-				if (file1.isFile()) {
-					pages.add(file1.getName().substring(0,
-							file1.getName().length() - 6));
+				String fileName = file1.getName().substring(0,
+						file1.getName().length() - 6);
+				if (file1.isFile() && (!pages.contains(fileName))) {
+					pages.add(fileName);
 				}
 			}
+
 		}
 		return pages;
 	}
 
-	public ArrayList<String> getIndexesFromDisk() {
+	public ArrayList<String> getAllIndexes() {
 		ArrayList<String> Indexes = new ArrayList<>();
+
+		Enumeration dirs = DBApp.virtualDirectory.keys();
+		while (dirs.hasMoreElements()) {
+			String dirName = (String) dirs.nextElement();
+			if (dirName.indexOf(indexesDirectory) == 0) {
+				String tmp = dirName.replace(indexesDirectory + "/", "");
+				Indexes.add(tmp.substring(0, tmp.length() - 4));
+			}
+		}
+
 		File file = new File(indexesDirectory);
 		if (file.exists() && file.isDirectory()) {
 			File[] list = file.listFiles();
 			// for each item in the list
 			for (File file1 : list) {
-				if (file1.isFile()) {
-					Indexes.add(file1.getName().substring(0,
-							file1.getName().length() - 4));
+				String indexName = file1.getName().substring(0,
+						file1.getName().length() - 4);
+				if (file1.isFile() && (!Indexes.contains(indexName))) {
+					Indexes.add(indexName);
 				}
 			}
 		}
@@ -219,6 +245,6 @@ public class Table implements Serializable {
 		os.writeObject(x);
 		os.close();
 		fs.close();
+		System.out.println("");
 	}
-
 }

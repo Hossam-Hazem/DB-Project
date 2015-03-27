@@ -33,7 +33,6 @@ public class DBApp {
 			} else {
 				serialize(ColName, virtualDirectory.get(ColName));
 			}
-
 		}
 		virtualDirectory.clear();
 
@@ -44,9 +43,11 @@ public class DBApp {
 		// TODO Auto-generated method stub
 		Object ret = virtualDirectory.get(Path);
 		if (Path.equals("data\\metadata.csv")) {
-			FileReader fileReader = new FileReader("data\\metadata.csv");
-			BufferedReader br = new BufferedReader(fileReader);
-			return br;
+			if (ret != null) {
+				return ret;
+			} else {
+				return readMetaFromDisk();
+			}
 		} else {
 			if (ret != null) {
 				return ret;
@@ -70,17 +71,28 @@ public class DBApp {
 		new Table(strTableName, strKeyColName);
 	}
 
+	private static String readMetaFromDisk() throws IOException {
+		// TODO Auto-generated method stub
+		FileReader fileReader = new FileReader("data\\metadata.csv");
+		BufferedReader br = new BufferedReader(fileReader);
+		String tmp = "";
+		String metaInfo = "";
+		while ((tmp = br.readLine()) != null) {
+			metaInfo += tmp + "\n";
+		}
+		br.close();
+		return metaInfo;
+	}
+
 	private static void updateMeta(Hashtable<String, String> htblColNameType,
 			Hashtable<String, String> htblColNameRefs, String strKeyColName,
 			String strTableName) throws IOException, ClassNotFoundException {
 		// TODO Auto-generated method stub
 
-		BufferedReader meta = (BufferedReader) loadFileDyn("data\\metadata.csv");
-		String x = meta.readLine();
-		meta.close();
+		String meta = (String) loadFileDyn("data\\metadata.csv");
 
 		String metaInfo = "";
-		if (x == null) {
+		if (meta.equals("")) {
 			metaInfo += "Table Name, Column Name, Column Type, Key, Indexed, References"
 					+ "\n";
 		}
@@ -173,7 +185,8 @@ public class DBApp {
 		String Tablepath = "data/tables/" + strTableName + "/" + strTableName
 				+ ".bin";
 		// Table T = (Table) deserialize(Tablepath);
-		Table T = (Table) loadFileDyn(Tablepath);
+		// Table T = (Table) loadFileDyn(Tablepath);
+		Table T = new Table(strTableName);
 		T.addIndextoArray(strColName);
 		BTree B = new BTree();
 		LinearHashtable L = new LinearHashtable();
@@ -214,7 +227,8 @@ public class DBApp {
 		String path = "data/tables/" + strTableName + "/" + strTableName
 				+ ".bin";
 		// Table x = (Table) deserialize(path);
-		Table x = (Table) loadFileDyn(path);
+		// Table x = (Table) loadFileDyn(path);
+		Table x = new Table(strTableName);
 		if (x.getAllPages().size() == 0) {
 			x.createPage();
 			System.out.println("YAAAAY First page intialized");
@@ -245,9 +259,9 @@ public class DBApp {
 
 		}
 		currentPagepath = path;
-		path = "data/tables/" + strTableName + "/" + strTableName + ".bin";
+		// path = "data/tables/" + strTableName + "/" + strTableName + ".bin";
 		// serialize(path, x);
-		virtualDirectory.put(path, x);
+		// virtualDirectory.put(path, x);
 		path = "data/tables/" + strTableName + "/" + "pages/" + lastPage
 				+ ".class";
 		// serialize(path, lastPageinTable);
@@ -283,7 +297,8 @@ public class DBApp {
 		String Tpath = "data/tables/" + strTableName + "/" + strTableName
 				+ ".bin";
 		// Table T = (Table) deserialize(Tpath);
-		Table T = (Table) loadFileDyn(Tpath);
+		// Table T = (Table) loadFileDyn(Tpath);
+		Table T = new Table(strTableName);
 		String PrimaryKeyColumn = T.getIndexes().get(0);
 		String BTreePath = "data/tables/" + strTableName + "/" + "BTree/"
 				+ PrimaryKeyColumn + ".bin";
@@ -321,7 +336,8 @@ public class DBApp {
 		ArrayList TakenRecords = new ArrayList();
 		String tablepath = "data/tables/" + strTable + "/" + strTable + ".bin";
 		// Table T = (Table) deserialize(tablepath);
-		Table T = (Table) loadFileDyn(tablepath);
+		// Table T = (Table) loadFileDyn(tablepath);
+		Table T = new Table(strTable);
 		Iterator coloumnsI = htblColNameValue.keySet().iterator();
 		if (strOperator.equals("OR")) {
 			while (coloumnsI.hasNext()) {
@@ -469,7 +485,8 @@ public class DBApp {
 		ArrayList TakenRecords = new ArrayList();
 		String tablepath = "data/tables/" + strTable + "/" + strTable + ".bin";
 		// Table T = (Table) deserialize(tablepath);
-		Table T = (Table) loadFileDyn(tablepath);
+		// Table T = (Table) loadFileDyn(tablepath);
+		Table T = new Table(strTable);
 		Iterator coloumnsI = htblColNameRange.keySet().iterator();
 
 		if (strOperator.equals("OR")) {
@@ -746,7 +763,8 @@ public class DBApp {
 		ArrayList result = new ArrayList();
 		String tablepath = "data/tables/" + strTable + "/" + strTable + ".bin";
 		// Table T = (Table) deserialize(tablepath);
-		Table T = (Table) loadFileDyn(tablepath);
+		// Table T = (Table) loadFileDyn(tablepath);
+		Table T = new Table(strTable);
 		if (T.getIndexes().contains(ColumnName)) {
 			String LHTPath = "data/tables/" + strTable + "/" + "hashtable/"
 					+ ColumnName + ".bin";
@@ -792,7 +810,8 @@ public class DBApp {
 		ArrayList tempresult = new ArrayList();
 		String tablepath = "data/tables/" + strTable + "/" + strTable + ".bin";
 		// Table T = (Table) deserialize(tablepath);
-		Table T = (Table) loadFileDyn(tablepath);
+		// Table T = (Table) loadFileDyn(tablepath);
+		Table T = new Table(strTable);
 		Iterator coloumnsI = htblColNameValue.keySet().iterator();
 		if (strOperator.equals("OR")) {
 			while (coloumnsI.hasNext()) {
@@ -874,7 +893,7 @@ public class DBApp {
 		htblColNameRefs.put("col1", "table1.id");
 
 		// ===> execute once and comment createTable and execute multiple times
-		//createTable("testAll", htblColNameType, htblColNameRefs, "col2");
+		createTable("testAll", htblColNameType, htblColNameRefs, "col2");
 
 		// createIndex("testAll", "col3");
 
@@ -893,7 +912,7 @@ public class DBApp {
 		 * os.close(); fi.close();
 		 */
 
-		for (int i = 0; i < 300; i++) {
+		for (int i = 0; i < 200; i++) {
 			Hashtable<String, String> insertion = new Hashtable<String, String>();
 			insertion.put("col1", "str");
 			insertion.put("col2", "int");
@@ -903,7 +922,7 @@ public class DBApp {
 			insertIntoTable("testAll", insertion);
 		}
 
-		//saveAll();
+		saveAll();
 
 		/*
 		 * Hashtable<String, String> insertion = new Hashtable<String,
