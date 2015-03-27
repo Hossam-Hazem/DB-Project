@@ -13,7 +13,7 @@ public class DBAppTest {
 		testingAll = new DBApp();
 		
 		// createTable Test
-		/*
+		
 		testingAll.init();
 		Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
 		htblColNameType.put("name", "java.lang.String");
@@ -28,7 +28,7 @@ public class DBAppTest {
 		testingAll.createTable("testCreateTable", htblColNameType, htblColNameRefs,
 				"ID");
 		testingAll.saveAll();
-		*/
+		
 		
 		//----------------------------------------------------------------------------------------
 		
