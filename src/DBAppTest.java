@@ -70,7 +70,7 @@ public class DBAppTest {
 		*/
 		
 		// Right Insertion... Page created... Record Added to page, table, tree
-		
+		/*
 		testingAll.init();
 		Hashtable<String, String> insertion = new Hashtable<String, String>();
 		insertion.put("name", "student");
@@ -95,13 +95,13 @@ public class DBAppTest {
 		testingAll.saveAll();
 		Page p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
 		System.out.println("All Records: " + p.getRecords());
-		
+		*/
 		
 		//----------------------------------------------------------------------------------------
 		
 		// deleteFromTable Test
-		/*
-		testingAll.init();
+		
+		DBApp.init();
 		Page p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
 		System.out.println("All Records: " + p.getRecords());
 
@@ -120,7 +120,7 @@ public class DBAppTest {
 		x = (BTree) deserialize("data/tables/testCreateTable/BTree/ID.bin");
 		x.print();
 		testingAll.saveAll();
-*/
+
 		
 	}	
 	public static Object deserialize(String path) throws IOException,
