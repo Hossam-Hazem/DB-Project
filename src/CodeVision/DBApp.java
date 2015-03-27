@@ -125,6 +125,12 @@ public class DBApp {
 		fileWriter.close();
 	}
 
+	private static void writeMetaOverwrite(String metaInfo) throws IOException {
+		FileWriter fileWriter = new FileWriter("data\\metadata.csv");
+		fileWriter.append(metaInfo);
+		fileWriter.close();
+	}
+
 	/*
 	 * private static void makeTable(String strTableName) throws IOException {
 	 * Table x = new Table(strTableName); String path = "data/tables/" +
@@ -182,7 +188,7 @@ public class DBApp {
 			}
 		}
 
-		writeMeta(MetaInfo);
+		writeMetaOverwrite(MetaInfo);
 
 		// Indexing
 		Table T = new Table(strTableName);

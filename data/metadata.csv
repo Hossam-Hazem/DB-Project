@@ -1,5 +1,5 @@
 Table Name, Column Name, Column Type, Key, Indexed, References
-testCreateTable, ID, java.lang.Integer, true, false, table1.id
+testCreateTable, ID, java.lang.Integer, true, true, table1.id
 testCreateTable, major, java.lang.String, false, false, null
 testCreateTable, age, java.lang.Integer, false, false, null
-testCreateTable, name, java.lang.String, false, false, null
+testCreateTable, name, java.lang.String, false, true, null
