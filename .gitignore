@@ -45,3 +45,12 @@ bin/DBApp.class
 *.class
 *.class
 bin/DBApp.class
+data/metadata.csv
+*.bin
+data/metadata.csv
+*.class
+*.class
+bin/DBApp.class
+*.csv
+data/metadata.csv
+*.csv
