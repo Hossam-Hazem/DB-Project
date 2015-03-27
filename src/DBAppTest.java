@@ -14,7 +14,7 @@ public class DBAppTest {
 		testingAll = new DBApp();
 		
 		// createTable Test
-		/*
+		
 		testingAll.init();
 		Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
 		htblColNameType.put("name", "java.lang.String");
@@ -29,7 +29,7 @@ public class DBAppTest {
 		testingAll.createTable("testCreateTable", htblColNameType, htblColNameRefs,
 				"ID");
 		testingAll.saveAll();
-		*/
+		
 		
 		//----------------------------------------------------------------------------------------
 		
@@ -45,6 +45,7 @@ public class DBAppTest {
 		// insertIntoTable Test
 		/*
 		// Wrong Insertion... Invalid Input Format... NO Effect
+
 		testingAll.init();
 		Hashtable<String, String> insertionW1 = new Hashtable<String, String>();
 		insertionW1.put("name", "omar");
@@ -59,9 +60,11 @@ public class DBAppTest {
 		// Wrong Insertion... Column does NOT Exist... NO Effect
 		
 		testingAll.init();
+
 		Hashtable<String, String> insertionW2 = new Hashtable<String, String>();
 		insertionW2.put("name", "omar");
 		insertionW2.put("age", "2");
+		
 		// HERE
 		insertionW2.put("ERROR", "");
 		insertionW2.put("major", "cs");
@@ -72,7 +75,7 @@ public class DBAppTest {
 		// Right Insertion... Page created... Record Added to page, table, tree
 		
 		testingAll.init();
-		Hashtable<String, String> insertion = new Hashtable<String, String>();
+		insertion = new Hashtable<String, String>();
 		insertion.put("name", "student");
 		insertion.put("age", "20");
 		insertion.put("major", "cs");
@@ -95,7 +98,7 @@ public class DBAppTest {
 		testingAll.saveAll();
 		Page p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
 		System.out.println("All Records: " + p.getRecords());
-		*/
+		
 		
 		//----------------------------------------------------------------------------------------
 		
@@ -110,7 +113,7 @@ public class DBAppTest {
 		
 		
 		Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
-		
+
 		htblColNameValue.put("ID", "202020");
 		htblColNameValue.put("name", "student2");
 		
@@ -166,7 +169,8 @@ public class DBAppTest {
 		testingAll.init();
 		Page p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
 		System.out.println("All Records: " + p.getRecords());
-
+		
+		
 		Hashtable<String, String> select = new Hashtable<String, String>();
 		select.put("age", ">=30");
 		Iterator I = testingAll.selectRangeFromTableV2("testCreateTable", select,
@@ -199,8 +203,6 @@ public class DBAppTest {
 		Page p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
 		System.out.println("All Records: " + p.getRecords());
 		*/
-		
-		
 	}	
 	
 	
