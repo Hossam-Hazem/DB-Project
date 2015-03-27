@@ -1,19 +1,20 @@
 package BPTree;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Properties;
 
 
 
-/**
- * @author  mohamed
- */
 public class BTreeLeafNode<TKey extends Comparable<TKey>, TValue> extends BTreeNode<TKey> implements Serializable {
 
 	/**
      * @uml.property  name="values"
      */
-	protected final static int LEAFORDER = 4;
+	protected static int LEAFORDER ;
 	private Object[] values;
     /**
      * @uml.property  name="filters"
@@ -22,11 +23,23 @@ public class BTreeLeafNode<TKey extends Comparable<TKey>, TValue> extends BTreeN
     private ArrayList<Boolean> filters;
 
     public BTreeLeafNode() {
+    	try{
+    		LEAFORDER=getNSize();
+    		}
+    		catch(Exception e){
+    			System.out.println("Config file BTree Error");
+    		}
         this.filters = new ArrayList<>();
 		this.keys = new Object[LEAFORDER + 1];
 		this.values = new Object[LEAFORDER + 1];
 	}
-
+    public static int getNSize() throws IOException {
+		InputStream input = new FileInputStream("config/DBApp.properties");
+		Properties prop = new Properties();
+		prop.load(input);
+		//System.out.println("Leaf" + Integer.parseInt(prop.getProperty("BPlusTreeN")));
+		return Integer.parseInt(prop.getProperty("BPlusTreeN"));
+	}
     public BTreeLeafNode(BTreeLeafNode smallest) {
         this.keys = smallest.keys;
         this.values = smallest.values;

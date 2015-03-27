@@ -13,8 +13,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Properties;
 
 
 
@@ -22,17 +26,33 @@ import java.util.ArrayList;
  * @author  mohamed
  */
 class BTreeInnerNode<TKey extends Comparable<TKey>> extends BTreeNode<TKey> implements Serializable{
-	protected final static int INNERORDER = 4;
+	
+	protected  static int INNERORDER ;
+	
+
 	/**
      * @uml.property  name="children"
      */
+
 	protected Object[] children; 
 	
 	public BTreeInnerNode() {
+		try{
+		INNERORDER=getNSize();
+		}
+		catch(Exception e){
+			System.out.println("Config file BTree Error");
+		}
 		this.keys = new Object[INNERORDER + 1];
 		this.children = new Object[INNERORDER + 2];
 	}
-	
+	public static int getNSize() throws IOException {
+		InputStream input = new FileInputStream("config/DBApp.properties");
+		Properties prop = new Properties();
+		prop.load(input);
+		//System.out.println(Integer.parseInt(prop.getProperty("BPlusTreeN")));
+		return Integer.parseInt(prop.getProperty("BPlusTreeN"));
+	}
 	@SuppressWarnings("unchecked")
 	public BTreeNode<TKey> getChild(int index) {
 		return (BTreeNode<TKey>)this.children[index];
