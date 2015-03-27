@@ -25,7 +25,7 @@ public class DBAppTest {
 		htblColNameRefs.put("ID", "table1.id");
 
 		// ===> execute once and comment createTable and execute multiple
-		testingAll.createTable("testCreateTable3", htblColNameType, htblColNameRefs,
+		testingAll.createTable("testCreateTable", htblColNameType, htblColNameRefs,
 				"ID");
 		testingAll.saveAll();
 		*/
@@ -35,7 +35,7 @@ public class DBAppTest {
 		// createIndex Test
 		/*
 		testingAll.init();
-		testingAll.createIndex("testCreateTable3", "name");
+		testingAll.createIndex("testCreateTable", "name");
 		testingAll.saveAll();
 		*/
 		
@@ -77,24 +77,21 @@ public class DBAppTest {
 		insertion.put("age", "20");
 		insertion.put("major", "cs");
 		insertion.put("ID", "10101010");
-		testingAll.insertIntoTable("testCreateTable3", insertion);
+		testingAll.insertIntoTable("testCreateTable", insertion);
 		
-		Hashtable<String, String> insertion2 = new Hashtable<String, String>();
-		insertion2.put("name", "student2");
-		insertion2.put("age", "30");
-		insertion2.put("major", "cs");
-		insertion2.put("ID", "20202020");
-		testingAll.insertIntoTable("testCreateTable3", insertion2);
+		insertion.put("name", "student2");
+		insertion.put("age", "30");
+		insertion.put("major", "cs");
+		insertion.put("ID", "20202020");
+		testingAll.insertIntoTable("testCreateTable", insertion);
 		
-		Hashtable<String, String> insertion3 = new Hashtable<String, String>();
-		insertion3.put("name", "student3");
-		insertion3.put("age", "40");
-		insertion3.put("major", "DMET");
-		insertion3.put("ID", "30303030");
-		testingAll.insertIntoTable("testCreateTable3", insertion3);
-		
+		insertion.put("name", "student3");
+		insertion.put("age", "40");
+		insertion.put("major", "DMET");
+		insertion.put("ID", "30303030");
+		testingAll.insertIntoTable("testCreateTable", insertion);
 		testingAll.saveAll();
-		Page p = (Page) deserialize("data/tables/testCreateTable3/pages/0.class");
+		Page p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
 		System.out.println("All Records: " + p.getRecords());
 		*/
 		
@@ -103,25 +100,24 @@ public class DBAppTest {
 		// deleteFromTable Test
 		
 		testingAll.init();
-		Page p = (Page) deserialize("data/tables/testCreateTable3/pages/0.class");
+		Page p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
 		System.out.println("All Records: " + p.getRecords());
 
-		BTree x = (BTree) deserialize("data/tables/testCreateTable3/BTree/ID.bin");
+		BTree x = (BTree) deserialize("data/tables/testCreateTable/BTree/ID.bin");
 		x.print();
 		
 		// NO Effect
 		Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
 		htblColNameValue.put("ID", "10101010");
 		htblColNameValue.put("name", "student2");
-		testingAll.deleteFromTable("testCreateTable3", htblColNameValue, "OR");
+		testingAll.deleteFromTable("testCreateTable", htblColNameValue, "OR");
 
-		
-		testingAll.saveAll();
-		p = (Page) deserialize("data/tables/testCreateTable3/pages/0.class");
+		p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
 		System.out.println("All Records: " + p.getRecords());
 
-		x = (BTree) deserialize("data/tables/testCreateTable3/BTree/ID.bin");
+		x = (BTree) deserialize("data/tables/testCreateTable/BTree/ID.bin");
 		x.print();
+		testingAll.saveAll();
 
 		
 	}	
