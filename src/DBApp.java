@@ -290,7 +290,9 @@ public class DBApp {
 				Page p = (Page) loadFileDyn(RPath);
 				p.removeRecord(PrimaryKeyColumn, PrimaryKeyValue);
 				L.delete(PrimaryKeyValue);
-				B.delete(Integer.parseInt(PrimaryKeyValue));
+				
+				B.delete( (Comparable) getValueIfValid(strTableName,PrimaryKeyColumn,
+						 PrimaryKeyValue));
 				// serialize(RPath, p);
 				virtualDirectory.put(RPath, p);
 				// serialize(LHTPath, L);
