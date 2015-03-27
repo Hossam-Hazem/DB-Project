@@ -142,21 +142,21 @@ public class DBAppTest {
 		Hashtable<String, String> select = new Hashtable<String, String>();
 		select.put("ID", "101010");
 		select.put("name", "student3");
-		testingAll.selectValueFromTableV2("testCreateTable", select, "AND");
+		testingAll.selectValueFromTable("testCreateTable", select, "AND");
 		
 		
 		//AND
 		Hashtable<String, String> select2 = new Hashtable<String, String>();
 		select2.put("ID", "303030");
 		select2.put("name", "student3");
-		testingAll.selectValueFromTableV2("testCreateTable", select2, "AND");
+		testingAll.selectValueFromTable("testCreateTable", select2, "AND");
 		
 		
 		//OR
 		Hashtable<String, String> select3 = new Hashtable<String, String>();
 		select3.put("ID", "101010");
 		select3.put("name", "student3");
-		testingAll.selectValueFromTableV2("testCreateTable", select3, "OR");
+		testingAll.selectValueFromTable("testCreateTable", select3, "OR");
 		
 		testingAll.saveAll();
 		*/
@@ -172,7 +172,7 @@ public class DBAppTest {
 
 		Hashtable<String, String> select = new Hashtable<String, String>();
 		select.put("age", ">=30");
-		Iterator I = testingAll.selectRangeFromTableV2("testCreateTable", select,
+		Iterator I = testingAll.selectRangeFromTable("testCreateTable", select,
 				"AND");
 
 		while (I.hasNext()) {
@@ -182,7 +182,7 @@ public class DBAppTest {
 		
 		//----------------------------------------------------------------------------------------
 		// saveAll Test
-		/*
+		
 		testingAll.init();
 		Hashtable<String, String> insertionWithSave = new Hashtable<String, String>();
 		insertionWithSave.put("name", "student with save");
@@ -201,7 +201,7 @@ public class DBAppTest {
 		
 		Page p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
 		System.out.println("All Records: " + p.getRecords());
-		*/
+		
 		
 		
 	}	

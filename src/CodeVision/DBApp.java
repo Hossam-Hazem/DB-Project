@@ -308,7 +308,7 @@ public class DBApp {
 	public static void deleteFromTable(String strTableName,
 			Hashtable<String, String> htblColNameValue, String strOperator)
 			throws DBEngineException, ClassNotFoundException, IOException {
-		Iterator I = selectValueFromTableV2(strTableName, htblColNameValue,
+		Iterator I = selectValueFromTable(strTableName, htblColNameValue,
 				strOperator);
 		String Tpath = "data/tables/" + strTableName + "/" + strTableName
 				+ ".bin";
@@ -574,7 +574,7 @@ public class DBApp {
 		return result;
 	}
 
-	public static Iterator selectRangeFromTableV2(String strTable,
+	public static Iterator selectRangeFromTable(String strTable,
 			Hashtable<String, String> htblColNameValue, String strOperator)
 			throws ClassNotFoundException, IOException {
 		ArrayList result = new ArrayList();
@@ -676,7 +676,7 @@ public class DBApp {
 
 	}
 
-	public static Iterator selectValueFromTableV2(String strTable,
+	public static Iterator selectValueFromTable(String strTable,
 			Hashtable<String, String> htblColNameValue, String strOperator)
 			throws DBEngineException, ClassNotFoundException, IOException {
 		ArrayList result = new ArrayList();
