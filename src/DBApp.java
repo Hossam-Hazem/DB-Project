@@ -723,7 +723,47 @@ public class DBApp {
 
 	}
 	
-	public static void main(String[] args) throws ClassNotFoundException, DBAppException, IOException   {
+	public static Object getValueIfValid(String tableName, String columnName, String value) throws IOException, ClassNotFoundException{
+		Hashtable<String, String> original = new Hashtable<String, String>();
+		String currentLine = "";
+		FileReader fileReader = new FileReader("data/metadata.csv");
+		BufferedReader br = new BufferedReader(fileReader);
+		while ((currentLine = br.readLine()) != null) {
+			String[] result = currentLine.split(", ");
+			if (result[0].equals(tableName)) {
+				original.put(result[1], result[2]);
+				//System.out.println(result[1] + ": " + result[2]);
+			}
+		}
+		
+		if(!original.containsKey(columnName)){
+			return null;
+		}
+		
+		String strColType = original.get(columnName);
+		System.out.println("type: "+strColType);
+		String strColValue = value;
+		System.out.println("value: "+strColValue);
+		Class x = Class.forName(strColType);
+		// System.out.println(x);
+		// Constructor conh structor = x.;
+
+		Object y = null;
+		try {
+			y = x.getDeclaredConstructor(String.class).newInstance(
+					strColValue);
+		} catch (InstantiationException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			System.out.println("Invalid input");
+			return null;
+
+		}
+		System.out.println("returned value: " + y.toString());
+		return y;
+	}
+	
+	public static void main(String[] args) throws ClassNotFoundException, DBAppException, IOException, DBEngineException   {
 
 		// test save all by doing the following : go to ===>
 		/*
@@ -998,13 +1038,19 @@ public class DBApp {
 
 		createTable("testIsValid2", htblColNameType, htblColNameRefs, "ID");
 		*/
+		/*
 		Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
 		//htblColNameValue.put("m", "2810999");
 		htblColNameValue.put("ID", "2810999");
 		htblColNameValue.put("name", "Omar");
 		
 		System.out.println(isValidInput("testIsValid2", htblColNameValue));
-		
+		*/
+		//---------------------------------------------------------------------------------
+		// test getValueIfValid
+		System.out.println(getValueIfValid("testIsValid2", "age", "20"));
+		System.out.println(getValueIfValid("testIsValid2", "age", "omar"));
+		System.out.println(getValueIfValid("testIsValid2", "name", "omar"));
 		
 	}
 }
@@ -1012,3 +1058,7 @@ public class DBApp {
 // createTable Done
 // createInsex Done
 // insertIntoTable Done --> lssa 7war el key bs
+// Edit already exists and call it in create table -----> Kareem 
+//Edit is valid input and call it in create table -----> Kareem 
+//Edit get value if valid and call it in create table -----> Kareem 
+
