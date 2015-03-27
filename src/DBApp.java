@@ -279,7 +279,9 @@ public class DBApp {
 
 		ArrayList<String> indices = T.getIndexes();
 		while (I.hasNext()) {
+			
 			Hashtable<String, String> r = (Hashtable<String, String>) I.next();
+			if(r!=null){
 			String PrimaryKeyValue = r.get(PrimaryKeyColumn);
 			String RPath = (String) L.get(PrimaryKeyValue);
 			// Page p = (Page) deserialize(RPath);
@@ -293,6 +295,7 @@ public class DBApp {
 			virtualDirectory.put(LHTPath, L);
 			// serialize(BTreePath, B);
 			virtualDirectory.put(BTreePath, B);
+			}
 		}
 
 	}
