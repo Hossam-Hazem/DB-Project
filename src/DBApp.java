@@ -190,67 +190,69 @@ public class DBApp {
 	public static void insertIntoTable(String strTableName,
 			Hashtable<String, String> htblColNameValue) throws DBAppException,
 			ClassNotFoundException, IOException {
-		String currentPagepath;
-		String path = "data/tables/" + strTableName + "/" + strTableName
-				+ ".bin";
-		// Table x = (Table) deserialize(path);
-		Table x = (Table) loadFileDyn(path);
-		if (x.getAllPages().size() == 0) {
-			x.createPage();
-			System.out.println("YAAAAY First page intialized");
-		}
+		if (isValidInput(strTableName, htblColNameValue)) {
+			String currentPagepath;
+			String path = "data/tables/" + strTableName + "/" + strTableName
+					+ ".bin";
+			// Table x = (Table) deserialize(path);
+			Table x = (Table) loadFileDyn(path);
+			if (x.getAllPages().size() == 0) {
+				x.createPage();
+				System.out.println("YAAAAY First page intialized");
+			}
 
-		String lastPage = x.getAllPages().get(x.getAllPages().size() - 1);
-		// System.out.println(lastPage);
-		// System.out.println(lastPage);
-		path = "data/tables/" + strTableName + "/" + "pages/" + lastPage
-				+ ".class";
-		// Page lastPageinTable = (Page) deserialize(path);
-		Page lastPageinTable = (Page) loadFileDyn(path);
-		if (!lastPageinTable.isFull()) {
-			lastPageinTable.addRecord(htblColNameValue);
-			lastPageinTable
-					.setRowsCounter(lastPageinTable.getRowsCounter() + 1);
-		} else {
-			x.createPage(); // already added in the method to the array
-			lastPage = x.getAllPages().get(x.getAllPages().size() - 1);
-			System.out.println("New page created HOHOHOHO");
+			String lastPage = x.getAllPages().get(x.getAllPages().size() - 1);
+			// System.out.println(lastPage);
+			// System.out.println(lastPage);
 			path = "data/tables/" + strTableName + "/" + "pages/" + lastPage
 					+ ".class";
-			// lastPageinTable = (Page) deserialize(path);
-			lastPageinTable = (Page) loadFileDyn(path);
-			lastPageinTable.addRecord(htblColNameValue);
-			lastPageinTable
-					.setRowsCounter(lastPageinTable.getRowsCounter() + 1);
+			// Page lastPageinTable = (Page) deserialize(path);
+			Page lastPageinTable = (Page) loadFileDyn(path);
+			if (!lastPageinTable.isFull()) {
+				lastPageinTable.addRecord(htblColNameValue);
+				lastPageinTable
+						.setRowsCounter(lastPageinTable.getRowsCounter() + 1);
+			} else {
+				x.createPage(); // already added in the method to the array
+				lastPage = x.getAllPages().get(x.getAllPages().size() - 1);
+				System.out.println("New page created HOHOHOHO");
+				path = "data/tables/" + strTableName + "/" + "pages/"
+						+ lastPage + ".class";
+				// lastPageinTable = (Page) deserialize(path);
+				lastPageinTable = (Page) loadFileDyn(path);
+				lastPageinTable.addRecord(htblColNameValue);
+				lastPageinTable
+						.setRowsCounter(lastPageinTable.getRowsCounter() + 1);
 
-		}
-		currentPagepath = path;
-		path = "data/tables/" + strTableName + "/" + strTableName + ".bin";
-		// serialize(path, x);
-		virtualDirectory.put(path, x);
-		path = "data/tables/" + strTableName + "/" + "pages/" + lastPage
-				+ ".class";
-		// serialize(path, lastPageinTable);
-		virtualDirectory.put(path, lastPageinTable);
-		// indexing
-		ArrayList<String> Indexes = x.getIndexes();
-		for (int c = 0; c < Indexes.size(); c++) {
-			String index = Indexes.get(c);
-			String BTreePath = "data/tables/" + strTableName + "/" + "BTree/"
-					+ index + ".bin";
-			String LHTPath = "data/tables/" + strTableName + "/" + "hashtable/"
-					+ index + ".bin";
-			// BTree B = (BTree) deserialize(BTreePath);
-			BTree B = (BTree) loadFileDyn(BTreePath);
-			// LinearHashtable L = (LinearHashtable) deserialize(LHTPath);
-			LinearHashtable L = (LinearHashtable) loadFileDyn(LHTPath);
-			String value = htblColNameValue.get(index);
-			B.put(value, currentPagepath);
-			L.put(value, currentPagepath);
-			// serialize(LHTPath, L);
-			virtualDirectory.put(LHTPath, L);
-			// serialize(BTreePath, B);
-			virtualDirectory.put(BTreePath, B);
+			}
+			currentPagepath = path;
+			path = "data/tables/" + strTableName + "/" + strTableName + ".bin";
+			// serialize(path, x);
+			virtualDirectory.put(path, x);
+			path = "data/tables/" + strTableName + "/" + "pages/" + lastPage
+					+ ".class";
+			// serialize(path, lastPageinTable);
+			virtualDirectory.put(path, lastPageinTable);
+			// indexing
+			ArrayList<String> Indexes = x.getIndexes();
+			for (int c = 0; c < Indexes.size(); c++) {
+				String index = Indexes.get(c);
+				String BTreePath = "data/tables/" + strTableName + "/"
+						+ "BTree/" + index + ".bin";
+				String LHTPath = "data/tables/" + strTableName + "/"
+						+ "hashtable/" + index + ".bin";
+				// BTree B = (BTree) deserialize(BTreePath);
+				BTree B = (BTree) loadFileDyn(BTreePath);
+				// LinearHashtable L = (LinearHashtable) deserialize(LHTPath);
+				LinearHashtable L = (LinearHashtable) loadFileDyn(LHTPath);
+				String value = htblColNameValue.get(index);
+				B.put(value, currentPagepath);
+				L.put(value, currentPagepath);
+				// serialize(LHTPath, L);
+				virtualDirectory.put(LHTPath, L);
+				// serialize(BTreePath, B);
+				virtualDirectory.put(BTreePath, B);
+			}
 		}
 
 	}
@@ -665,8 +667,10 @@ public class DBApp {
 
 	}
 	
-public static boolean isValidInput(String strTableName, Hashtable<String, String> htblColNameValue) throws IOException, NoSuchFieldException, SecurityException, ClassNotFoundException {
-		
+	public static boolean isValidInput(String strTableName,
+			Hashtable<String, String> htblColNameValue) throws IOException,
+			ClassNotFoundException {
+
 		// contains column names and column types of input table
 		Hashtable<String, String> original = new Hashtable<String, String>();
 		String currentLine = "";
@@ -674,35 +678,52 @@ public static boolean isValidInput(String strTableName, Hashtable<String, String
 		BufferedReader br = new BufferedReader(fileReader);
 		while ((currentLine = br.readLine()) != null) {
 			String[] result = currentLine.split(", ");
-			if(result[0].equals(strTableName)){
+			if (result[0].equals(strTableName)) {
 				original.put(result[1], result[2]);
+				//System.out.println(result[1] + ": " + result[2]);
 			}
 		}
 		Set set = htblColNameValue.entrySet();
 		Iterator it = set.iterator();
 		while (it.hasNext()) {
 			Map.Entry entry = (Map.Entry) it.next();
-			
+
 			System.out.println(entry.getKey() + " : " + entry.getValue());
-			if(!original.containsKey(entry.getKey())){
-				
-				System.out.println("let's dance");
+			if (!original.containsKey(entry.getKey())) {
+
+				System.out.println("Column does not exist in that table");
 				return false;
 			}
-			
+
+			String strColType = original.get(entry.getKey());
+			//System.out.println(strColType);
+			String strColValue = (String) entry.getValue();
+			//System.out.println(strColValue);
+			Class x = Class.forName(strColType);
+			// System.out.println(x);
+			// Constructor conh structor = x.;
+
+			Object y = null;
+			try {
+				y = x.getDeclaredConstructor(String.class).newInstance(
+						strColValue);
+			} catch (InstantiationException | IllegalAccessException
+					| IllegalArgumentException | InvocationTargetException
+					| NoSuchMethodException | SecurityException e) {
+				System.out.println("Invalid input");
+				return false;
+
+			}
+			//System.out.println(y);
+
 		}
-		
-		
-		
-		
-		
+
 		// TO BE REMOVED
 		return true;
-		
+
 	}
 	
-	public static void main(String[] args) throws IOException, DBAppException,
-			ClassNotFoundException, DBEngineException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	public static void main(String[] args) throws ClassNotFoundException, DBAppException, IOException   {
 
 		// test save all by doing the following : go to ===>
 		/*
@@ -935,16 +956,56 @@ public static boolean isValidInput(String strTableName, Hashtable<String, String
 		 * while (I.hasNext()) { System.out.println("done " +
 		 * I.next().toString()); }
 		 */
-		
-		String strColType = "java.lang.Integer";
-		 String strColValue = "100";
+		/*
+		String strColType = "java.lang.Character";
+		 String strColValue = "omar";
 		 Class x = Class.forName( strColType );
 		 System.out.println(x);
-		 //Constructor constructor = x.;
-		 Object y =  x.getDeclaredConstructor(String.class).newInstance(strColValue);
+		 //Constructor conh   structor = x.;
+		 
+		 Object y = null;
+		try {
+			y = x.getDeclaredConstructor(String.class).newInstance(strColValue);
+		} catch (InstantiationException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			System.out.println("Invalid input, FOCUS :@");
+			
+		}
 		 System.out.println(y);
+*/
+		/*
+		init();
+		Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
+		htblColNameType.put("name", "str");
+		htblColNameType.put("age", "int");
+		htblColNameType.put("ID", "int");
+		htblColNameType.put("major", "str");
 
+		Hashtable<String, String> htblColNameRefs = new Hashtable<String, String>();
 
+		createTable("testIsValid", htblColNameType, htblColNameRefs, "ID");
+		*/
+		/*
+		init();
+		Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
+		htblColNameType.put("name", "java.lang.String");
+		htblColNameType.put("age", "java.lang.Integer");
+		htblColNameType.put("ID", "java.lang.Integer");
+		htblColNameType.put("major", "java.lang.String");
+
+		Hashtable<String, String> htblColNameRefs = new Hashtable<String, String>();
+
+		createTable("testIsValid2", htblColNameType, htblColNameRefs, "ID");
+		*/
+		Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
+		//htblColNameValue.put("m", "2810999");
+		htblColNameValue.put("ID", "2810999");
+		htblColNameValue.put("name", "Omar");
+		
+		System.out.println(isValidInput("testIsValid2", htblColNameValue));
+		
+		
 	}
 }
 
