@@ -43,30 +43,29 @@ public class DBAppTest {
 		//----------------------------------------------------------------------------------------
 		
 		// insertIntoTable Test
-		
-		// Wrong Insertion... Invalid Input Format... NO Effect
 		/*
+		// Wrong Insertion... Invalid Input Format... NO Effect
 		testingAll.init();
-		Hashtable<String, String> insertion = new Hashtable<String, String>();
-		insertion.put("name", "omar");
-		insertion.put("age", "2");
+		Hashtable<String, String> insertionW1 = new Hashtable<String, String>();
+		insertionW1.put("name", "omar");
+		insertionW1.put("age", "2");
 		//HERE
-		insertion.put("ID", "ERROR");
-		insertion.put("major", "cs");
-		testingAll.insertIntoTable("testCreateTable", insertion);
+		insertionW1.put("ID", "ERROR");
+		insertionW1.put("major", "cs");
+		testingAll.insertIntoTable("testCreateTable", insertionW1);
 		testingAll.saveAll();
 		
 		
 		// Wrong Insertion... Column does NOT Exist... NO Effect
 		
 		testingAll.init();
-		Hashtable<String, String> insertion = new Hashtable<String, String>();
-		insertion.put("name", "omar");
-		insertion.put("age", "2");
+		Hashtable<String, String> insertionW2 = new Hashtable<String, String>();
+		insertionW2.put("name", "omar");
+		insertionW2.put("age", "2");
 		// HERE
-		insertion.put("ERROR", "");
-		insertion.put("major", "cs");
-		testingAll.insertIntoTable("testCreateTable", insertion);
+		insertionW2.put("ERROR", "");
+		insertionW2.put("major", "cs");
+		testingAll.insertIntoTable("testCreateTable", insertionW2);
 		testingAll.saveAll();
 		
 		
@@ -77,21 +76,21 @@ public class DBAppTest {
 		insertion.put("name", "student");
 		insertion.put("age", "20");
 		insertion.put("major", "cs");
-		insertion.put("ID", "10101010");
+		insertion.put("ID", "101010");
 		testingAll.insertIntoTable("testCreateTable", insertion);
 		
 		Hashtable<String, String> insertion2 = new Hashtable<String, String>();
 		insertion2.put("name", "student2");
 		insertion2.put("age", "30");
 		insertion2.put("major", "cs");
-		insertion2.put("ID", "20202020");
+		insertion2.put("ID", "202020");
 		testingAll.insertIntoTable("testCreateTable", insertion2);
 		
 		Hashtable<String, String> insertion3 = new Hashtable<String, String>();
 		insertion3.put("name", "student3");
 		insertion3.put("age", "40");
 		insertion3.put("major", "DMET");
-		insertion3.put("ID", "30303030");
+		insertion3.put("ID", "303030");
 		testingAll.insertIntoTable("testCreateTable", insertion3);
 		testingAll.saveAll();
 		Page p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
@@ -109,10 +108,12 @@ public class DBAppTest {
 		BTree x = (BTree) deserialize("data/tables/testCreateTable/BTree/ID.bin");
 		x.print();
 		
-		// NO Effect
+		
 		Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
-		htblColNameValue.put("ID", "20202020");
-		htblColNameValue.put("name", "student2");
+		//htblColNameValue.put("major", "scs");
+		htblColNameValue.put("ID", "202020");
+		//htblColNameValue.put("name", "student2");
+		
 		testingAll.deleteFromTable("testCreateTable", htblColNameValue, "AND");
 	
 	    testingAll.saveAll();
@@ -136,21 +137,21 @@ public class DBAppTest {
 		
 		// Nothing will be returned... AND
 		Hashtable<String, String> select = new Hashtable<String, String>();
-		select.put("ID", "10101010");
+		select.put("ID", "101010");
 		select.put("name", "student3");
 		testingAll.selectValueFromTableV2("testCreateTable", select, "AND");
 		
 		
 		//AND
 		Hashtable<String, String> select2 = new Hashtable<String, String>();
-		select2.put("ID", "30303030");
+		select2.put("ID", "303030");
 		select2.put("name", "student3");
 		testingAll.selectValueFromTableV2("testCreateTable", select2, "AND");
 		
 		
 		//OR
 		Hashtable<String, String> select3 = new Hashtable<String, String>();
-		select3.put("ID", "10101010");
+		select3.put("ID", "101010");
 		select3.put("name", "student3");
 		testingAll.selectValueFromTableV2("testCreateTable", select3, "OR");
 		
@@ -166,9 +167,8 @@ public class DBAppTest {
 		Page p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
 		System.out.println("All Records: " + p.getRecords());
 
-		// Nothing will be returned... AND
 		Hashtable<String, String> select = new Hashtable<String, String>();
-		select.put("ID", ">3");
+		select.put("age", ">=30");
 		Iterator I = testingAll.selectRangeFromTableV2("testCreateTable", select,
 				"AND");
 
@@ -199,6 +199,8 @@ public class DBAppTest {
 		Page p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
 		System.out.println("All Records: " + p.getRecords());
 		*/
+		
+		
 	}	
 	
 	

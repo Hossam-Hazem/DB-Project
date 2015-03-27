@@ -20,7 +20,7 @@ public class DBApp {
 	static String tempTabe;
 	static Hashtable<String, Object> virtualDirectory;
 
-	public static void init() {
+	public void init() {
 		virtualDirectory = new Hashtable<String, Object>();
 	}
 
@@ -75,7 +75,8 @@ public class DBApp {
 						+ (String) entry.getValue()
 						+ ", "
 						+ (entry.getKey().equals(strKeyColName) ? "true"
-								: "false") + ", " + "false" + ", "
+								: "false") + ", " + (entry.getKey().equals(strKeyColName) ? "true"
+										: "false") + ", "
 						+ htblColNameRefs.get(entry.getKey()) + "\n";
 
 				fileWriter.append(temp);
@@ -1185,7 +1186,7 @@ public class DBApp {
 		  while (I.hasNext()) { System.out.println("done " +
 		  I.next().toString()); }
 		  */
-		init();
+		//init();
 		Page p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
 		System.out.println("All Records: " + p.getRecords());
 
@@ -1196,7 +1197,7 @@ public class DBApp {
 				"OR");
 
 		while (I.hasNext()) {
-			System.out.println("done " + I.next().toString());
+			System.out.println("done: " + I.next().toString());
 		}
 
 		
