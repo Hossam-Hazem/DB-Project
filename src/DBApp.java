@@ -28,7 +28,12 @@ public class DBApp {
 		Enumeration ColNames = virtualDirectory.keys();
 		while (ColNames.hasMoreElements()) {
 			String ColName = (String) ColNames.nextElement();
-			serialize(ColName, virtualDirectory.get(ColName));
+			if (ColName.equals("data\\metadata.csv")) {
+				writeMeta((String) virtualDirectory.get(ColName));
+			} else {
+				serialize(ColName, virtualDirectory.get(ColName));
+			}
+
 		}
 		virtualDirectory.clear();
 
@@ -38,53 +43,69 @@ public class DBApp {
 			throws ClassNotFoundException, IOException {
 		// TODO Auto-generated method stub
 		Object ret = virtualDirectory.get(Path);
-		if (ret != null) {
-			return ret;
+		if (Path.equals("data\\metadata.csv")) {
+			FileReader fileReader = new FileReader("data\\metadata.csv");
+			BufferedReader br = new BufferedReader(fileReader);
+			return br;
 		} else {
-			return deserialize(Path);
+			if (ret != null) {
+				return ret;
+			} else {
+				return deserialize(Path);
+			}
 		}
+
 	}
 
 	@SuppressWarnings("rawtypes")
 	public static void createTable(String strTableName,
 			Hashtable<String, String> htblColNameType,
 			Hashtable<String, String> htblColNameRefs, String strKeyColName)
-			throws DBAppException, IOException {
+			throws DBAppException, IOException, ClassNotFoundException {
 		if (alreadyExist(strTableName) == false) {
-			FileReader fileReader = new FileReader("data/metadata.csv");
-			BufferedReader br = new BufferedReader(fileReader);
-			String x = br.readLine();
-
-			FileWriter fileWriter = new FileWriter("data/metadata.csv", true);
-
-			if (x == null) {
-				fileWriter
-						.append("Table Name, Column Name, Column Type, Key, Indexed, References");
-				fileWriter.append("\n");
-			}
-
-			Set set = htblColNameType.entrySet();
-			Iterator it = set.iterator();
-			while (it.hasNext()) {
-				Map.Entry entry = (Map.Entry) it.next();
-				String temp = strTableName
-						+ ", "
-						+ (String) entry.getKey()
-						+ ", "
-						+ (String) entry.getValue()
-						+ ", "
-						+ (entry.getKey().equals(strKeyColName) ? "true"
-								: "false") + ", " + "false" + ", "
-						+ htblColNameRefs.get(entry.getKey()) + "\n";
-
-				fileWriter.append(temp);
-				System.out.println(entry.getKey() + " : " + entry.getValue());
-			}
-			br.close();
-			fileWriter.close();
+			updateMeta(htblColNameType, htblColNameRefs, strKeyColName,
+					strTableName);
 		}
 		// makeTable(strTableName);
 		new Table(strTableName, strKeyColName);
+	}
+
+	private static void updateMeta(Hashtable<String, String> htblColNameType,
+			Hashtable<String, String> htblColNameRefs, String strKeyColName,
+			String strTableName) throws IOException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+
+		BufferedReader meta = (BufferedReader) loadFileDyn("data\\metadata.csv");
+		String x = meta.readLine();
+		meta.close();
+
+		String metaInfo = "";
+		if (x == null) {
+			metaInfo += "Table Name, Column Name, Column Type, Key, Indexed, References"
+					+ "\n";
+		}
+
+		Set set = htblColNameType.entrySet();
+		Iterator it = set.iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry) it.next();
+			String temp = strTableName + ", " + (String) entry.getKey() + ", "
+					+ (String) entry.getValue() + ", "
+					+ (entry.getKey().equals(strKeyColName) ? "true" : "false")
+					+ ", " + "false" + ", "
+					+ htblColNameRefs.get(entry.getKey()) + "\n";
+
+			metaInfo += temp;
+			System.out.println(entry.getKey() + " : " + entry.getValue());
+		}
+
+		virtualDirectory.put("data\\metadata.csv", metaInfo);
+	}
+
+	private static void writeMeta(String metaInfo) throws IOException {
+		FileWriter fileWriter = new FileWriter("data\\metadata.csv", true);
+		fileWriter.append(metaInfo);
+		fileWriter.close();
 	}
 
 	/*
@@ -199,7 +220,7 @@ public class DBApp {
 			System.out.println("YAAAAY First page intialized");
 		}
 
-		String lastPage = x.getAllPages().get(x.getAllPages().size() - 1);
+		String lastPage = x.getLastPage();
 		// System.out.println(lastPage);
 		// System.out.println(lastPage);
 		path = "data/tables/" + strTableName + "/" + "pages/" + lastPage
@@ -840,21 +861,21 @@ public class DBApp {
 			ClassNotFoundException, DBEngineException {
 
 		// test save all by doing the following : go to ===>
-		/*
-		 * init();
-		 * 
-		 * Hashtable<String, String> htblColNameType = new Hashtable<String,
-		 * String>(); htblColNameType.put("col1", "str");
-		 * htblColNameType.put("col2", "int"); htblColNameType.put("col3",
-		 * "int"); htblColNameType.put("col4", "str");
-		 * 
-		 * Hashtable<String, String> htblColNameRefs = new Hashtable<String,
-		 * String>(); htblColNameRefs.put("col1", "table1.id");
-		 * 
-		 * // ===> execute once and comment createTable and execute multiple
-		 * times createTable("testAll", htblColNameType, htblColNameRefs,
-		 * "col2");
-		 */
+
+		init();
+
+		Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
+		htblColNameType.put("col1", "str");
+		htblColNameType.put("col2", "int");
+		htblColNameType.put("col3", "int");
+		htblColNameType.put("col4", "str");
+
+		Hashtable<String, String> htblColNameRefs = new Hashtable<String, String>();
+		htblColNameRefs.put("col1", "table1.id");
+
+		// ===> execute once and comment createTable and execute multiple times
+		//createTable("testAll", htblColNameType, htblColNameRefs, "col2");
+
 		// createIndex("testAll", "col3");
 
 		// Clean csv file
@@ -871,16 +892,19 @@ public class DBApp {
 		 * (Table)os.readObject(); System.out.println(x.getTableName());
 		 * os.close(); fi.close();
 		 */
-		/*
-		 * for (int i = 0; i < 300; i++) { Hashtable<String, String> insertion =
-		 * new Hashtable<String, String>(); insertion.put("col1", "str");
-		 * insertion.put("col2", "int"); insertion.put("col3", "int");
-		 * insertion.put("col4", "str");
-		 * 
-		 * insertIntoTable("testAll", insertion); }
-		 * 
-		 * saveAll();
-		 */
+
+		for (int i = 0; i < 300; i++) {
+			Hashtable<String, String> insertion = new Hashtable<String, String>();
+			insertion.put("col1", "str");
+			insertion.put("col2", "int");
+			insertion.put("col3", "int");
+			insertion.put("col4", "str");
+
+			insertIntoTable("testAll", insertion);
+		}
+
+		//saveAll();
+
 		/*
 		 * Hashtable<String, String> insertion = new Hashtable<String,
 		 * String>(); insertion.put("col1", "str"); insertion.put("col2",

@@ -14,17 +14,41 @@ public class Table implements Serializable {
 	private ArrayList<String> Indexes;
 	private int nameCounter;
 	private String pagesDirectory;
+	private String indexesDirectory;
 	private String tableName;
+	private String tablePath;
+	private String lastPage;
 
 	private static final long serialVersionUID = 1928828356132285922L;
 
-	public Table(String name, String PrimaryKey) throws IOException {
-		this.allPages = new ArrayList<String>();
+	public Table(String tableNameToBeCreated, String PrimaryKey)
+			throws IOException {
 		this.Indexes = new ArrayList<String>();
-		this.tableName = name;
-		this.nameCounter = 0;
-		Indexes.add(PrimaryKey);
-		pagesDirectory = "data/tables/" + tableName + "/pages";
+		this.tableName = tableNameToBeCreated;
+		this.pagesDirectory = "data/tables/" + tableName + "/pages";
+		this.indexesDirectory = "data/tables/" + tableName + "/hashtable";
+		this.tablePath = "data/tables/" + tableName;
+
+		makeTableFolders(PrimaryKey);
+
+		this.allPages = getPages();
+		this.nameCounter = getNameCounter(this.allPages);
+		this.Indexes = getIndexesFromDisk();
+	}
+
+	public Table(String tableNameToBeRetrieved) throws IOException {
+		this.Indexes = new ArrayList<String>();
+		this.tableName = tableNameToBeRetrieved;
+		this.pagesDirectory = "data/tables/" + tableName + "/pages";
+		this.indexesDirectory = "data/tables/" + tableName + "/hashtable";
+		this.tablePath = "data/tables/" + tableName;
+
+		this.allPages = getPages();
+		this.nameCounter = getNameCounter(this.allPages);
+		this.Indexes = getIndexesFromDisk();
+	}
+
+	private void makeTableFolders(String PrimaryKey) throws IOException {
 		String path = "data/tables/" + tableName + "/" + tableName + ".bin";
 		// make folder containing all table info
 		File saveDir = new File("data/tables");
@@ -46,12 +70,6 @@ public class Table implements Serializable {
 		if (!saveDir.exists()) {
 			saveDir.mkdirs();
 		}
-		/*
-		 * FileOutputStream fs = new FileOutputStream(path); ObjectOutputStream
-		 * os = new ObjectOutputStream(fs); os.writeObject(x); os.close();
-		 * fs.close();
-		 */
-		// serialize(path, this);
 		DBApp.virtualDirectory.put(path, this);
 		BTree T = new BTree();
 		path = "data/tables/" + tableName + "/BTree/" + PrimaryKey + ".bin";
@@ -61,33 +79,71 @@ public class Table implements Serializable {
 		path = "data/tables/" + tableName + "/hashtable/" + PrimaryKey + ".bin";
 		// serialize(path, H);
 		DBApp.virtualDirectory.put(path, H);
-
 	}
-
-	/*
-	 * public void createPage() throws IOException { Page x = new
-	 * Page(tableName, "" + pagesNames.size()); File saveDir = new File("data/"
-	 * + tableName); if (!saveDir.exists()) { saveDir.mkdirs(); }
-	 * FileOutputStream fs = new FileOutputStream("data/" + tableName + "/" +
-	 * pagesNames.size() + ".bin"); ObjectOutputStream os = new
-	 * ObjectOutputStream(fs); os.writeObject(x); os.close(); fs.close(); //
-	 * pagesNames.add(x.); }
-	 */
 
 	public void createPage() throws IOException {
 		Page x = new Page("" + nameCounter);
 		String path = pagesDirectory + "/" + x.getPageName() + ".class";
 		/*
-		FileOutputStream fs = new FileOutputStream(path);
-		ObjectOutputStream os = new ObjectOutputStream(fs);
-		os.writeObject(x);
-		os.close();
-		fs.close();
-		*/
+		 * FileOutputStream fs = new FileOutputStream(path); ObjectOutputStream
+		 * os = new ObjectOutputStream(fs); os.writeObject(x); os.close();
+		 * fs.close();
+		 */
 		DBApp.virtualDirectory.put(path, x);
 		allPages.add("" + nameCounter);
+		lastPage = "" + nameCounter;
 		nameCounter++;
 
+	}
+
+	public ArrayList<String> getPages() {
+		ArrayList<String> pages = new ArrayList<>();
+		File file = new File(pagesDirectory);
+		if (file.exists() && file.isDirectory()) {
+			File[] list = file.listFiles();
+			// for each item in the list
+			for (File file1 : list) {
+				if (file1.isFile()) {
+					pages.add(file1.getName().substring(0,
+							file1.getName().length() - 6));
+				}
+			}
+		}
+		return pages;
+	}
+
+	public ArrayList<String> getIndexesFromDisk() {
+		ArrayList<String> Indexes = new ArrayList<>();
+		File file = new File(indexesDirectory);
+		if (file.exists() && file.isDirectory()) {
+			File[] list = file.listFiles();
+			// for each item in the list
+			for (File file1 : list) {
+				if (file1.isFile()) {
+					Indexes.add(file1.getName().substring(0,
+							file1.getName().length() - 4));
+				}
+			}
+		}
+		return Indexes;
+	}
+
+	public int getNameCounter(ArrayList<String> pages) throws IOException {
+		int nameCounter = 0;
+		if (pages.size() > 0) {
+			lastPage = pages.get(0);
+			for (int i = 0; i < pages.size(); i++) {
+				if (Integer.parseInt(pages.get(i).substring(0)
+						.replace(".class", "")) > Integer.parseInt(lastPage
+						.substring(0).replace(".class", ""))) {
+					lastPage = pages.get(i);
+				}
+			}
+			nameCounter = Integer.parseInt(lastPage.substring(0).replace(
+					".class", ""));
+			nameCounter++;
+		}
+		return nameCounter;
 	}
 
 	public ArrayList<String> getAllPages() {
@@ -132,6 +188,14 @@ public class Table implements Serializable {
 
 	public void addIndextoArray(String x) {
 		Indexes.add(x);
+	}
+
+	public String getLastPage() {
+		return lastPage;
+	}
+
+	public void setLastPage(String lastPage) {
+		this.lastPage = lastPage;
 	}
 
 	public static void main(String[] args) throws IOException {
