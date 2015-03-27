@@ -1,7 +1,10 @@
+import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -112,34 +115,76 @@ public class Page implements Serializable {
 		return res;
 	}
 
-	public ArrayList<Hashtable<String, String>> getRecordLessthan(
-			String ColumnName, String ColumnValue) {
+	public ArrayList<Hashtable<String, String>> getRecordLessthan(String TableName,
+			String ColumnName, String ColumnValue) throws ClassNotFoundException, IOException {
 		ArrayList res = new ArrayList();
 		Iterator i = records.iterator();
 		Hashtable<String, String> x;
 		while (i.hasNext()) {
 			x = (Hashtable<String, String>) i.next();
-			if (x.get(ColumnName).compareTo(ColumnValue) < 0) {
+			Comparable O1=(Comparable) getValueIfValid( TableName,  ColumnName,  ColumnValue);
+			Comparable O2=(Comparable) getValueIfValid( TableName,  ColumnName,  x.get(ColumnName));
+			if (O2.compareTo(O1) < 0) {
 				res.add(x);
 			}
 		}
 		return res;
 	}
 
-	public ArrayList<Hashtable<String, String>> getRecordbiggerthan(
-			String ColumnName, String ColumnValue) {
+	public ArrayList<Hashtable<String, String>> getRecordbiggerthan(String TableName,
+			String ColumnName, String ColumnValue) throws ClassNotFoundException, IOException {
 		ArrayList res = new ArrayList();
 		Iterator i = records.iterator();
 		Hashtable<String, String> x;
 		while (i.hasNext()) {
 			x = (Hashtable<String, String>) i.next();
-			if (x.get(ColumnName).compareTo(ColumnValue) > 0) {
+			Comparable O1=(Comparable) getValueIfValid( TableName,  ColumnName,  ColumnValue);
+			Comparable O2=(Comparable) getValueIfValid( TableName,  ColumnName,  x.get(ColumnName));
+			if (O2.compareTo(O1) > 0) {
 				res.add(x);
 			}
 		}
 		return res;
 	}
+	public static Object getValueIfValid(String tableName, String columnName, String value) throws IOException, ClassNotFoundException{
+		Hashtable<String, String> original = new Hashtable<String, String>();
+		String currentLine = "";
+		FileReader fileReader = new FileReader("data/metadata.csv");
+		BufferedReader br = new BufferedReader(fileReader);
+		while ((currentLine = br.readLine()) != null) {
+			String[] result = currentLine.split(", ");
+			if (result[0].equals(tableName)) {
+				original.put(result[1], result[2]);
+				//System.out.println(result[1] + ": " + result[2]);
+			}
+		}
+		
+		if(!original.containsKey(columnName)){
+			return null;
+		}
+		
+		String strColType = original.get(columnName);
+		System.out.println("type: "+strColType);
+		String strColValue = value;
+		System.out.println("value: "+strColValue);
+		Class x = Class.forName(strColType);
+		// System.out.println(x);
+		// Constructor conh structor = x.;
 
+		Object y = null;
+		try {
+			y = x.getDeclaredConstructor(String.class).newInstance(
+					strColValue);
+		} catch (InstantiationException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			System.out.println("Invalid input");
+			return null;
+
+		}
+		System.out.println("returned value: " + y.toString());
+		return y;
+	}
 	public boolean removeRecord(String ColumnName, String ColumnValue) {
 
 		Iterator i = ((ArrayList<Hashtable<String, String>>) records.clone())
@@ -153,4 +198,5 @@ public class Page implements Serializable {
 		}
 		return false;
 	}
+	
 }

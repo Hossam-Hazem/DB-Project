@@ -324,7 +324,8 @@ public class DBApp {
 			ArrayList pathesB = new ArrayList();
 
 			if (Columnrange.charAt(0) == '>') {
-				pathes = B.getbiggerthan(ColumnValue);
+				Comparable O=(Comparable) getValueIfValid( strTable,  ColumnName,  ColumnValue);
+				pathes = B.getbiggerthan(O);
 				Iterator pathesI = pathes.iterator();
 				ArrayList PagesScanned = new ArrayList();
 				while (pathesI.hasNext()) {
@@ -332,7 +333,7 @@ public class DBApp {
 					if (!PagesScanned.contains(PagePath)) {
 						// Page p = (Page) deserialize((PagePath));
 						Page p = (Page) loadFileDyn((PagePath));
-						Iterator Itemp = p.getRecordbiggerthan(
+						Iterator Itemp = p.getRecordbiggerthan(strTable,
 								ColumnName, ColumnValue).iterator();
 						while (Itemp.hasNext()) {
 							Hashtable<String, String> r = (Hashtable<String, String>) Itemp
@@ -347,7 +348,8 @@ public class DBApp {
 			}
 
 			if (Columnrange.charAt(0) == '<') {
-				pathes = B.getSmallerthan(ColumnValue);
+				Comparable O=(Comparable) getValueIfValid( strTable,  ColumnName,  ColumnValue);
+				pathes = B.getSmallerthan(O);
 				Iterator pathesI = pathes.iterator();
 				ArrayList PagesScanned = new ArrayList();
 				while (pathesI.hasNext()) {
@@ -355,7 +357,7 @@ public class DBApp {
 					if (!PagesScanned.contains(PagePath)) {
 						// Page p = (Page) deserialize((PagePath));
 						Page p = (Page) loadFileDyn((PagePath));
-						Iterator Itemp = p.getRecordLessthan(
+						Iterator Itemp = p.getRecordLessthan(strTable,
 								ColumnName, ColumnValue).iterator();
 						while (Itemp.hasNext()) {
 							Hashtable<String, String> r = (Hashtable<String, String>) Itemp
@@ -371,11 +373,11 @@ public class DBApp {
 
 				}
 			}
-
+			Comparable O = (Comparable) getValueIfValid(strTable, ColumnName,ColumnValue);
 			if (Columnrange.length() != 1
-					&& B.search(ColumnValue) != null) {
+					&& B.search(O) != null) {
 
-				String path = (String) B.search(ColumnValue);
+				String path = (String) B.search(O);
 				// Page p = (Page) deserialize((path));
 				Page p = (Page) loadFileDyn((path));
 				Hashtable<String, String> r = (Hashtable<String, String>) p
@@ -399,12 +401,12 @@ public class DBApp {
 					tempoe = p.getRecords(ColumnName, ColumnValue);
 
 				if (Columnrange.charAt(0) == '>')
-					tempo = p.getRecordbiggerthan(ColumnName,
+					tempo = p.getRecordbiggerthan(strTable,ColumnName,
 							ColumnValue);
 
 				if (Columnrange.charAt(0) == '<')
 					tempo = p
-							.getRecordLessthan(ColumnName, ColumnValue);
+							.getRecordLessthan(strTable,ColumnName, ColumnValue);
 
 				Iterator tempoI = tempoe.iterator();
 				while (tempoI.hasNext()) {
@@ -556,28 +558,29 @@ public class DBApp {
 						} else {
 							ColumnValue = ColumnAllValue.substring(2);
 						}
-
+						Comparable O1 =  (Comparable) getValueIfValid(strTable, ColumnName,ColumnValue );
+						Comparable O2 =  (Comparable) getValueIfValid(strTable, ColumnName,Record.get(ColumnName));
 						if (Columnrange.length() == 2) {
-							if (Record.get(ColumnName).compareTo(ColumnValue) != 0)
+							if (O2.compareTo(O1) != 0)
 								if (Columnrange.charAt(0) == '>') {
-									if (Record.get(ColumnName).compareTo(
-											ColumnValue) < 0)
+									if (O2.compareTo(
+											O1) < 0)
 										result.remove(Record);
 								}
 							if (Columnrange.charAt(0) == '<') {
-								if (Record.get(ColumnName).compareTo(
-										ColumnValue) > 0)
+								if (O2.compareTo(
+										O1) > 0)
 									result.remove(Record);
 							}
 						} else {
 							if (Columnrange.charAt(0) == '>') {
-								if (Record.get(ColumnName).compareTo(
-										ColumnValue) <= 0)
+								if (O2.compareTo(
+										O1) <= 0)
 									result.remove(Record);
 							}
 							if (Columnrange.charAt(0) == '<') {
-								if (Record.get(ColumnName).compareTo(
-										ColumnValue) >= 0)
+								if (O2.compareTo(
+										O1) >= 0)
 									result.remove(Record);
 							}
 						}
@@ -1058,7 +1061,7 @@ public class DBApp {
 
 		Hashtable<String, String> htblColNameRefs = new Hashtable<String, String>();
 
-		createTable("testvalueRange", htblColNameType, htblColNameRefs, "age");
+		createTable("testvalueRange", htblColNameType, htblColNameRefs, "ID");
 		
 		  Hashtable<String, String> insertion = new Hashtable<String,
 		  String>(); insertion.put("name", "omar"); insertion.put("age", "2");
@@ -1082,15 +1085,15 @@ public class DBApp {
 		  
 		  Hashtable<String, String> htblColNameRange = new Hashtable<String,
 		  String>();
-		  createIndex("testvalueRange", "ID");
-		  //htblColNameRange.put("age", "<286205"); //
-		  htblColNameRange.put("ID","<286205"); 
+		  
+		  htblColNameRange.put("age", "<5"); //
+		  htblColNameRange.put("ID",">=286205"); 
 		 // htblColNameRange.put("name", "omar");
 		 // htblColNameRange.put("major", "cs");
 		 // deleteFromTable("testDeleteV21", htblColNameRange, "OR");
 		//  htblColNameRange.put("major", "cs");
 		  Iterator I = selectRangeFromTableV2("testvalueRange",
-		  htblColNameRange, "OR");
+		  htblColNameRange, "AND");
 		  
 		  while (I.hasNext()) { System.out.println("done " +
 		  I.next().toString()); }
