@@ -20,7 +20,7 @@ public class DBApp {
 	static String tempTabe;
 	static Hashtable<String, Object> virtualDirectory;
 
-	public static void init() {
+	public  void init() {
 		virtualDirectory = new Hashtable<String, Object>();
 	}
 
@@ -293,9 +293,17 @@ public class DBApp {
 				Iterator indicesI = indices.iterator();
 				while(indicesI.hasNext()){
 					String Column=(String) indicesI.next();
+				 BTreePath = "data/tables/" + strTableName + "/" + "BTree/"
+							+ Column + ".bin";
+				 LHTPath = "data/tables/" + strTableName + "/" + "hashtable/"
+						+ Column + ".bin";
+				  B = (BTree) loadFileDyn(BTreePath);
+					// LinearHashtable L = (LinearHashtable) deserialize(LHTPath);
+				  L = (LinearHashtable) loadFileDyn(LHTPath);
 				L.delete(r.get(Column));
-				B.delete( (Comparable) getValueIfValid(strTableName,Column,
-						r.get(Column)));
+				Comparable O = (Comparable) getValueIfValid(strTableName,Column,
+						r.get(Column));
+				B.delete( O);
 				// serialize(RPath, p);
 				// serialize(LHTPath, L);
 				virtualDirectory.put(LHTPath, L);
