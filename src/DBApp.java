@@ -281,20 +281,23 @@ public class DBApp {
 		while (I.hasNext()) {
 			
 			Hashtable<String, String> r = (Hashtable<String, String>) I.next();
-			if(r!=null){
-			String PrimaryKeyValue = r.get(PrimaryKeyColumn);
-			String RPath = (String) L.get(PrimaryKeyValue);
-			// Page p = (Page) deserialize(RPath);
-			Page p = (Page) loadFileDyn(RPath);
-			p.removeRecord(PrimaryKeyColumn, PrimaryKeyValue);
-			L.delete(PrimaryKeyValue);
-			B.delete(PrimaryKeyValue);
-			// serialize(RPath, p);
-			virtualDirectory.put(RPath, p);
-			// serialize(LHTPath, L);
-			virtualDirectory.put(LHTPath, L);
-			// serialize(BTreePath, B);
-			virtualDirectory.put(BTreePath, B);
+
+			if (r != null) {
+				String PrimaryKeyValue = r.get(PrimaryKeyColumn);
+				String RPath = (String) L.get(PrimaryKeyValue);
+				// Page p = (Page) deserialize(RPath);
+				Page p = (Page) loadFileDyn(RPath);
+				p.removeRecord(PrimaryKeyColumn, PrimaryKeyValue);
+				L.delete(PrimaryKeyValue);
+				
+				B.delete( (Comparable) getValueIfValid(strTableName,PrimaryKeyColumn,
+						 PrimaryKeyValue));
+				// serialize(RPath, p);
+				virtualDirectory.put(RPath, p);
+				// serialize(LHTPath, L);
+				virtualDirectory.put(LHTPath, L);
+				// serialize(BTreePath, B);
+				virtualDirectory.put(BTreePath, B);
 			}
 		}
 
