@@ -20,7 +20,7 @@ public class DBApp {
 	static String tempTabe;
 	static Hashtable<String, Object> virtualDirectory;
 
-	public static void init() {
+	static void init() {
 		virtualDirectory = new Hashtable<String, Object>();
 	}
 
@@ -159,7 +159,7 @@ public class DBApp {
 		LinearHashtable L = new LinearHashtable();
 		for (int i = 0; i < T.getNameCounter(); i++) {
 			String Pagepath = "data/tables/" + strTableName + "/" + "pages/"
-					+ i+".class";
+					+ i + ".class";
 			// Page P = (Page) deserialize(Pagepath);
 			Page P = (Page) loadFileDyn(Pagepath);
 
@@ -167,7 +167,8 @@ public class DBApp {
 			for (int j = 0; j < P.getRowsCounter(); j++) {
 				Hashtable<String, String> r = AllRecords.get(j);
 				String c = r.get(strColName);
-				B.put((Comparable) getValueIfValid(strTableName, strColName, c), Pagepath);
+				B.put((Comparable) getValueIfValid(strTableName, strColName, c),
+						Pagepath);
 				L.put(c, Pagepath);
 			}
 
@@ -246,8 +247,9 @@ public class DBApp {
 				// LinearHashtable L = (LinearHashtable) deserialize(LHTPath);
 				LinearHashtable L = (LinearHashtable) loadFileDyn(LHTPath);
 				String value = htblColNameValue.get(index);
-				Comparable O = (Comparable) getValueIfValid(strTableName, index, value);
-				B.put(O , currentPagepath);
+				Comparable O = (Comparable) getValueIfValid(strTableName,
+						index, value);
+				B.put(O, currentPagepath);
 				L.put(value, currentPagepath);
 				// serialize(LHTPath, L);
 				virtualDirectory.put(LHTPath, L);
@@ -279,31 +281,30 @@ public class DBApp {
 
 		ArrayList<String> indices = T.getIndexes();
 		while (I.hasNext()) {
-			
+
 			Hashtable<String, String> r = (Hashtable<String, String>) I.next();
-			if(r!=null){
-			String PrimaryKeyValue = r.get(PrimaryKeyColumn);
-			String RPath = (String) L.get(PrimaryKeyValue);
-			// Page p = (Page) deserialize(RPath);
-			Page p = (Page) loadFileDyn(RPath);
-			p.removeRecord(PrimaryKeyColumn, PrimaryKeyValue);
-			L.delete(PrimaryKeyValue);
-			B.delete(PrimaryKeyValue);
-			// serialize(RPath, p);
-			virtualDirectory.put(RPath, p);
-			// serialize(LHTPath, L);
-			virtualDirectory.put(LHTPath, L);
-			// serialize(BTreePath, B);
-			virtualDirectory.put(BTreePath, B);
+			if (r != null) {
+				String PrimaryKeyValue = r.get(PrimaryKeyColumn);
+				String RPath = (String) L.get(PrimaryKeyValue);
+				// Page p = (Page) deserialize(RPath);
+				Page p = (Page) loadFileDyn(RPath);
+				p.removeRecord(PrimaryKeyColumn, PrimaryKeyValue);
+				L.delete(PrimaryKeyValue);
+				B.delete(Integer.parseInt(PrimaryKeyValue));
+				// serialize(RPath, p);
+				virtualDirectory.put(RPath, p);
+				// serialize(LHTPath, L);
+				virtualDirectory.put(LHTPath, L);
+				// serialize(BTreePath, B);
+				virtualDirectory.put(BTreePath, B);
 			}
 		}
 
 	}
 
-
-
-
-	public static ArrayList SelectRangeOneCondition(String strTable,String ColumnName,String ColumnAllValue) throws ClassNotFoundException, IOException{
+	public static ArrayList SelectRangeOneCondition(String strTable,
+			String ColumnName, String ColumnAllValue)
+			throws ClassNotFoundException, IOException {
 		String tablepath = "data/tables/" + strTable + "/" + strTable + ".bin";
 		ArrayList result = new ArrayList();
 		// Table T = (Table) deserialize(tablepath);
@@ -317,8 +318,8 @@ public class DBApp {
 		}
 
 		if (T.getIndexes().contains(ColumnName)) {
-			String BTreePath = "data/tables/" + strTable + "/"
-					+ "BTree/" + ColumnName + ".bin";
+			String BTreePath = "data/tables/" + strTable + "/" + "BTree/"
+					+ ColumnName + ".bin";
 			// BTree B = (BTree) deserialize(BTreePath);
 			BTree B = (BTree) loadFileDyn(BTreePath);
 			ArrayList tempo = new ArrayList();
@@ -327,7 +328,8 @@ public class DBApp {
 			ArrayList pathesB = new ArrayList();
 
 			if (Columnrange.charAt(0) == '>') {
-				Comparable O=(Comparable) getValueIfValid( strTable,  ColumnName,  ColumnValue);
+				Comparable O = (Comparable) getValueIfValid(strTable,
+						ColumnName, ColumnValue);
 				pathes = B.getbiggerthan(O);
 				Iterator pathesI = pathes.iterator();
 				ArrayList PagesScanned = new ArrayList();
@@ -341,8 +343,8 @@ public class DBApp {
 						while (Itemp.hasNext()) {
 							Hashtable<String, String> r = (Hashtable<String, String>) Itemp
 									.next();
-								result.add(r);
-							
+							result.add(r);
+
 						}
 						PagesScanned.add(PagePath);
 					}
@@ -351,7 +353,8 @@ public class DBApp {
 			}
 
 			if (Columnrange.charAt(0) == '<') {
-				Comparable O=(Comparable) getValueIfValid( strTable,  ColumnName,  ColumnValue);
+				Comparable O = (Comparable) getValueIfValid(strTable,
+						ColumnName, ColumnValue);
 				pathes = B.getSmallerthan(O);
 				Iterator pathesI = pathes.iterator();
 				ArrayList PagesScanned = new ArrayList();
@@ -366,9 +369,8 @@ public class DBApp {
 							Hashtable<String, String> r = (Hashtable<String, String>) Itemp
 									.next();
 
-								result.add(r);
+							result.add(r);
 
-							
 						}
 						PagesScanned.add(PagePath);
 
@@ -376,17 +378,16 @@ public class DBApp {
 
 				}
 			}
-			Comparable O = (Comparable) getValueIfValid(strTable, ColumnName,ColumnValue);
-			if (Columnrange.length() != 1
-					&& B.search(O) != null) {
+			Comparable O = (Comparable) getValueIfValid(strTable, ColumnName,
+					ColumnValue);
+			if (Columnrange.length() != 1 && B.search(O) != null) {
 
 				String path = (String) B.search(O);
 				// Page p = (Page) deserialize((path));
 				Page p = (Page) loadFileDyn((path));
 				Hashtable<String, String> r = (Hashtable<String, String>) p
 						.getRecord(ColumnName, ColumnValue);
-					result.add(r);
-				
+				result.add(r);
 
 			}
 
@@ -396,26 +397,26 @@ public class DBApp {
 				ArrayList tempo = new ArrayList();
 				ArrayList tempoe = new ArrayList();
 				String Pname = (String) PagesI.next();
-				String PagePath = "data/tables/" + strTable + "/"
-						+ "pages/" + Pname + ".class";
+				String PagePath = "data/tables/" + strTable + "/" + "pages/"
+						+ Pname + ".class";
 				// Page p = (Page) deserialize(PagePath);
 				Page p = (Page) loadFileDyn(PagePath);
 				if (Columnrange.length() != 1)
 					tempoe = p.getRecords(ColumnName, ColumnValue);
 
 				if (Columnrange.charAt(0) == '>')
-					tempo = p.getRecordbiggerthan(strTable,ColumnName,
+					tempo = p.getRecordbiggerthan(strTable, ColumnName,
 							ColumnValue);
 
 				if (Columnrange.charAt(0) == '<')
-					tempo = p
-							.getRecordLessthan(strTable,ColumnName, ColumnValue);
+					tempo = p.getRecordLessthan(strTable, ColumnName,
+							ColumnValue);
 
 				Iterator tempoI = tempoe.iterator();
 				while (tempoI.hasNext()) {
 					Hashtable<String, String> r = (Hashtable<String, String>) tempoI
 							.next();
-						result.add(r);
+					result.add(r);
 				}
 
 			}
@@ -423,6 +424,7 @@ public class DBApp {
 		}
 		return result;
 	}
+
 	public static String getOperator(String x) {
 		String res = "";
 		if (x.charAt(1) == '=') {
@@ -504,7 +506,8 @@ public class DBApp {
 	}
 
 	public static Iterator selectRangeFromTableV2(String strTable,
-			Hashtable<String, String> htblColNameValue, String strOperator) throws ClassNotFoundException, IOException{
+			Hashtable<String, String> htblColNameValue, String strOperator)
+			throws ClassNotFoundException, IOException {
 		ArrayList result = new ArrayList();
 		ArrayList tempresult = new ArrayList();
 		String tablepath = "data/tables/" + strTable + "/" + strTable + ".bin";
@@ -516,11 +519,13 @@ public class DBApp {
 				String ColumnName = (String) coloumnsI.next();
 				System.out.println(ColumnName); // major
 				String ColumnValue = htblColNameValue.get(ColumnName);
-				tempresult=(SelectRangeOneCondition(strTable, ColumnName, ColumnValue));
-				Iterator tempresultI=tempresult.iterator();
-				while(tempresultI.hasNext()){
-					Hashtable<String, String> record =(Hashtable<String, String>) tempresultI.next();
-					if(!result.contains(record))
+				tempresult = (SelectRangeOneCondition(strTable, ColumnName,
+						ColumnValue));
+				Iterator tempresultI = tempresult.iterator();
+				while (tempresultI.hasNext()) {
+					Hashtable<String, String> record = (Hashtable<String, String>) tempresultI
+							.next();
+					if (!result.contains(record))
 						result.add(record);
 				}
 			}
@@ -534,13 +539,15 @@ public class DBApp {
 			while (coloumnsI.hasNext()) {
 				String ColumnName = (String) coloumnsI.next();
 				String ColumnAllValue = htblColNameValue.get(ColumnName);
-				System.out.println("Oo "+ColumnAllValue);
+				System.out.println("Oo " + ColumnAllValue);
 				if (flag == false) {
-					tempresult=(SelectRangeOneCondition(strTable, ColumnName, ColumnAllValue));
-					Iterator tempresultI=tempresult.iterator();
-					while(tempresultI.hasNext()){
-						Hashtable<String, String> record =(Hashtable<String, String>) tempresultI.next();
-						if(!result.contains(record))
+					tempresult = (SelectRangeOneCondition(strTable, ColumnName,
+							ColumnAllValue));
+					Iterator tempresultI = tempresult.iterator();
+					while (tempresultI.hasNext()) {
+						Hashtable<String, String> record = (Hashtable<String, String>) tempresultI
+								.next();
+						if (!result.contains(record))
 							result.add(record);
 					}
 					flag = true;
@@ -561,29 +568,27 @@ public class DBApp {
 						} else {
 							ColumnValue = ColumnAllValue.substring(2);
 						}
-						Comparable O1 =  (Comparable) getValueIfValid(strTable, ColumnName,ColumnValue );
-						Comparable O2 =  (Comparable) getValueIfValid(strTable, ColumnName,Record.get(ColumnName));
+						Comparable O1 = (Comparable) getValueIfValid(strTable,
+								ColumnName, ColumnValue);
+						Comparable O2 = (Comparable) getValueIfValid(strTable,
+								ColumnName, Record.get(ColumnName));
 						if (Columnrange.length() == 2) {
 							if (O2.compareTo(O1) != 0)
 								if (Columnrange.charAt(0) == '>') {
-									if (O2.compareTo(
-											O1) < 0)
+									if (O2.compareTo(O1) < 0)
 										result.remove(Record);
 								}
 							if (Columnrange.charAt(0) == '<') {
-								if (O2.compareTo(
-										O1) > 0)
+								if (O2.compareTo(O1) > 0)
 									result.remove(Record);
 							}
 						} else {
 							if (Columnrange.charAt(0) == '>') {
-								if (O2.compareTo(
-										O1) <= 0)
+								if (O2.compareTo(O1) <= 0)
 									result.remove(Record);
 							}
 							if (Columnrange.charAt(0) == '<') {
-								if (O2.compareTo(
-										O1) >= 0)
+								if (O2.compareTo(O1) >= 0)
 									result.remove(Record);
 							}
 						}
@@ -599,7 +604,7 @@ public class DBApp {
 			return result.iterator();
 		}
 		return null;
-		
+
 	}
 
 	public static Iterator selectValueFromTableV2(String strTable,
@@ -673,7 +678,7 @@ public class DBApp {
 		return null;
 
 	}
-	
+
 	public static boolean isValidInput(String strTableName,
 			Hashtable<String, String> htblColNameValue) throws IOException,
 			ClassNotFoundException {
@@ -687,7 +692,7 @@ public class DBApp {
 			String[] result = currentLine.split(", ");
 			if (result[0].equals(strTableName)) {
 				original.put(result[1], result[2]);
-				//System.out.println(result[1] + ": " + result[2]);
+				// System.out.println(result[1] + ": " + result[2]);
 			}
 		}
 		Set set = htblColNameValue.entrySet();
@@ -703,9 +708,9 @@ public class DBApp {
 			}
 
 			String strColType = original.get(entry.getKey());
-			//System.out.println(strColType);
+			// System.out.println(strColType);
 			String strColValue = (String) entry.getValue();
-			//System.out.println(strColValue);
+			// System.out.println(strColValue);
 			Class x = Class.forName(strColType);
 			// System.out.println(x);
 			// Constructor conh structor = x.;
@@ -721,7 +726,7 @@ public class DBApp {
 				return false;
 
 			}
-			//System.out.println(y);
+			// System.out.println(y);
 
 		}
 
@@ -729,8 +734,9 @@ public class DBApp {
 		return true;
 
 	}
-	
-	public static Object getValueIfValid(String tableName, String columnName, String value) throws IOException, ClassNotFoundException{
+
+	public static Object getValueIfValid(String tableName, String columnName,
+			String value) throws IOException, ClassNotFoundException {
 		Hashtable<String, String> original = new Hashtable<String, String>();
 		String currentLine = "";
 		FileReader fileReader = new FileReader("data/metadata.csv");
@@ -739,26 +745,25 @@ public class DBApp {
 			String[] result = currentLine.split(", ");
 			if (result[0].equals(tableName)) {
 				original.put(result[1], result[2]);
-				//System.out.println(result[1] + ": " + result[2]);
+				// System.out.println(result[1] + ": " + result[2]);
 			}
 		}
-		
-		if(!original.containsKey(columnName)){
+
+		if (!original.containsKey(columnName)) {
 			return null;
 		}
-		
+
 		String strColType = original.get(columnName);
-		System.out.println("type: "+strColType);
+		System.out.println("type: " + strColType);
 		String strColValue = value;
-		System.out.println("value: "+strColValue);
+		System.out.println("value: " + strColValue);
 		Class x = Class.forName(strColType);
 		// System.out.println(x);
 		// Constructor conh structor = x.;
 
 		Object y = null;
 		try {
-			y = x.getDeclaredConstructor(String.class).newInstance(
-					strColValue);
+			y = x.getDeclaredConstructor(String.class).newInstance(strColValue);
 		} catch (InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
@@ -769,8 +774,9 @@ public class DBApp {
 		System.out.println("returned value: " + y.toString());
 		return y;
 	}
-	
-	public static void main(String[] args) throws ClassNotFoundException, DBAppException, IOException, DBEngineException   {
+
+	public static void main(String[] args) throws ClassNotFoundException,
+			DBAppException, IOException, DBEngineException {
 
 		// test save all by doing the following : go to ===>
 		/*
@@ -958,7 +964,6 @@ public class DBApp {
 		 * I.next().toString()); }
 		 */
 
-
 		// test V2
 
 		/*
@@ -1004,56 +1009,51 @@ public class DBApp {
 		 * I.next().toString()); }
 		 */
 		/*
-		String strColType = "java.lang.Character";
-		 String strColValue = "omar";
-		 Class x = Class.forName( strColType );
-		 System.out.println(x);
-		 //Constructor conh   structor = x.;
-		 
-		 Object y = null;
-		try {
-			y = x.getDeclaredConstructor(String.class).newInstance(strColValue);
-		} catch (InstantiationException | IllegalAccessException
-				| IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException e) {
-			System.out.println("Invalid input, FOCUS :@");
-			
-		}
-		 System.out.println(y);
-*/
+		 * String strColType = "java.lang.Character"; String strColValue =
+		 * "omar"; Class x = Class.forName( strColType ); System.out.println(x);
+		 * //Constructor conh structor = x.;
+		 * 
+		 * Object y = null; try { y =
+		 * x.getDeclaredConstructor(String.class).newInstance(strColValue); }
+		 * catch (InstantiationException | IllegalAccessException |
+		 * IllegalArgumentException | InvocationTargetException |
+		 * NoSuchMethodException | SecurityException e) {
+		 * System.out.println("Invalid input, FOCUS :@");
+		 * 
+		 * } System.out.println(y);
+		 */
 		/*
-		init();
-		Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
-		htblColNameType.put("name", "str");
-		htblColNameType.put("age", "int");
-		htblColNameType.put("ID", "int");
-		htblColNameType.put("major", "str");
-
-		Hashtable<String, String> htblColNameRefs = new Hashtable<String, String>();
-
-		createTable("testIsValid", htblColNameType, htblColNameRefs, "ID");
-		*/
+		 * init(); Hashtable<String, String> htblColNameType = new
+		 * Hashtable<String, String>(); htblColNameType.put("name", "str");
+		 * htblColNameType.put("age", "int"); htblColNameType.put("ID", "int");
+		 * htblColNameType.put("major", "str");
+		 * 
+		 * Hashtable<String, String> htblColNameRefs = new Hashtable<String,
+		 * String>();
+		 * 
+		 * createTable("testIsValid", htblColNameType, htblColNameRefs, "ID");
+		 */
 		/*
-		init();
-		Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
-		htblColNameType.put("name", "java.lang.String");
-		htblColNameType.put("age", "java.lang.Integer");
-		htblColNameType.put("ID", "java.lang.Integer");
-		htblColNameType.put("major", "java.lang.String");
-
-		Hashtable<String, String> htblColNameRefs = new Hashtable<String, String>();
-
-		createTable("testIsValid2", htblColNameType, htblColNameRefs, "ID");
-		*/
+		 * init(); Hashtable<String, String> htblColNameType = new
+		 * Hashtable<String, String>(); htblColNameType.put("name",
+		 * "java.lang.String"); htblColNameType.put("age", "java.lang.Integer");
+		 * htblColNameType.put("ID", "java.lang.Integer");
+		 * htblColNameType.put("major", "java.lang.String");
+		 * 
+		 * Hashtable<String, String> htblColNameRefs = new Hashtable<String,
+		 * String>();
+		 * 
+		 * createTable("testIsValid2", htblColNameType, htblColNameRefs, "ID");
+		 */
 		/*
-		Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
-		//htblColNameValue.put("m", "2810999");
-		htblColNameValue.put("ID", "2810999");
-		htblColNameValue.put("name", "Omar");
-		
-		System.out.println(isValidInput("testIsValid2", htblColNameValue));
-		*/
-		//---------------------------------------------------------------------------------
+		 * Hashtable<String, String> htblColNameValue = new Hashtable<String,
+		 * String>(); //htblColNameValue.put("m", "2810999");
+		 * htblColNameValue.put("ID", "2810999"); htblColNameValue.put("name",
+		 * "Omar");
+		 * 
+		 * System.out.println(isValidInput("testIsValid2", htblColNameValue));
+		 */
+		// ---------------------------------------------------------------------------------
 		// test getValueIfValid
 		init();
 		Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
@@ -1065,49 +1065,53 @@ public class DBApp {
 		Hashtable<String, String> htblColNameRefs = new Hashtable<String, String>();
 
 		createTable("testvalueRange", htblColNameType, htblColNameRefs, "ID");
-		
-		  Hashtable<String, String> insertion = new Hashtable<String,
-		  String>(); insertion.put("name", "omar"); insertion.put("age", "2");
-		  insertion.put("ID", "2810999"); insertion.put("major", "cs");
-		  
-		  insertIntoTable("testvalueRange", insertion);
-		  
-		  insertion = new Hashtable<String, String>(); insertion.put("name",
-		  "hossam"); insertion.put("age", "3"); insertion.put("ID", "286205");
-		  insertion.put("major", "cs");
-		  
-		  insertIntoTable("testvalueRange", insertion);
-		  
-		  insertion = new Hashtable<String, String>(); insertion.put("name",
-		  "kareem"); insertion.put("age", "5"); insertion.put("ID", "2810989");
-		  insertion.put("major", "DMET");
-		  
-		  insertIntoTable("testvalueRange", insertion);
-		  
-		  
-		  
-		  Hashtable<String, String> htblColNameRange = new Hashtable<String,
-		  String>();
-		  
-		  htblColNameRange.put("age", "<5"); //
-		  htblColNameRange.put("ID",">=286205"); 
-		 // htblColNameRange.put("name", "omar");
-		 // htblColNameRange.put("major", "cs");
-		 // deleteFromTable("testDeleteV21", htblColNameRange, "OR");
-		//  htblColNameRange.put("major", "cs");
-		  Iterator I = selectRangeFromTableV2("testvalueRange",
-		  htblColNameRange, "AND");
-		  
-		  while (I.hasNext()) { System.out.println("done " +
-		  I.next().toString()); }
-		
+
+		Hashtable<String, String> insertion = new Hashtable<String, String>();
+		insertion.put("name", "omar");
+		insertion.put("age", "2");
+		insertion.put("ID", "2810999");
+		insertion.put("major", "cs");
+
+		insertIntoTable("testvalueRange", insertion);
+
+		insertion = new Hashtable<String, String>();
+		insertion.put("name", "hossam");
+		insertion.put("age", "3");
+		insertion.put("ID", "286205");
+		insertion.put("major", "cs");
+
+		insertIntoTable("testvalueRange", insertion);
+
+		insertion = new Hashtable<String, String>();
+		insertion.put("name", "kareem");
+		insertion.put("age", "5");
+		insertion.put("ID", "2810989");
+		insertion.put("major", "DMET");
+
+		insertIntoTable("testvalueRange", insertion);
+
+		Hashtable<String, String> htblColNameRange = new Hashtable<String, String>();
+
+		htblColNameRange.put("age", "<5"); //
+		htblColNameRange.put("ID", ">=286205");
+		// htblColNameRange.put("name", "omar");
+		// htblColNameRange.put("major", "cs");
+		// deleteFromTable("testDeleteV21", htblColNameRange, "OR");
+		// htblColNameRange.put("major", "cs");
+		Iterator I = selectRangeFromTableV2("testvalueRange", htblColNameRange,
+				"AND");
+
+		while (I.hasNext()) {
+			System.out.println("done " + I.next().toString());
+		}
+
 	}
 }
 
 // createTable Done
 // createInsex Done
 // insertIntoTable Done --> lssa 7war el key bs
-// Edit already exists and call it in create table -----> Kareem 
-//Edit is valid input and call it in create table -----> Kareem 
-//Edit get value if valid and call it in create table -----> Kareem 
+// Edit already exists and call it in create table -----> Kareem
+// Edit is valid input and call it in create table -----> Kareem
+// Edit get value if valid and call it in create table -----> Kareem
 // Look at last point in pdf

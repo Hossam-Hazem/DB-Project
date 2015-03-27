@@ -70,8 +70,21 @@ public class DBAppTest {
 		*/
 		
 		// Right Insertion... Page created... Record Added to page, table, tree
-		/*
+		
 		testingAll.init();
+		
+		Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
+		htblColNameType.put("name", "java.lang.String");
+		htblColNameType.put("age", "java.lang.Integer");
+		htblColNameType.put("ID", "java.lang.Integer");
+		htblColNameType.put("major", "java.lang.String");
+		
+		Hashtable<String, String> htblColNameRefs = new Hashtable<String, String>();
+		htblColNameRefs.put("ID", "table1.id");
+		
+		testingAll.createTable("testCreateTable", htblColNameType, htblColNameRefs,
+				"ID");
+		
 		Hashtable<String, String> insertion = new Hashtable<String, String>();
 		insertion.put("name", "student");
 		insertion.put("age", "20");
@@ -79,29 +92,33 @@ public class DBAppTest {
 		insertion.put("ID", "10101010");
 		testingAll.insertIntoTable("testCreateTable", insertion);
 		
+		insertion = new Hashtable<String, String>();
 		insertion.put("name", "student2");
 		insertion.put("age", "30");
 		insertion.put("major", "cs");
 		insertion.put("ID", "20202020");
 		testingAll.insertIntoTable("testCreateTable", insertion);
 		
+		insertion = new Hashtable<String, String>();
 		insertion.put("name", "student3");
 		insertion.put("age", "40");
 		insertion.put("major", "DMET");
 		insertion.put("ID", "30303030");
 		testingAll.insertIntoTable("testCreateTable", insertion);
+		
+		
 		testingAll.saveAll();
 		Page p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
 		System.out.println("All Records: " + p.getRecords());
-		*/
+		
 		
 		//----------------------------------------------------------------------------------------
 		
 		// deleteFromTable Test
 		
 		testingAll.init();
-		Page p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
-		System.out.println("All Records: " + p.getRecords());
+		Page p1 = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
+		System.out.println("All Records: " + p1.getRecords());
 
 		BTree x = (BTree) deserialize("data/tables/testCreateTable/BTree/ID.bin");
 		x.print();
@@ -112,8 +129,8 @@ public class DBAppTest {
 		htblColNameValue.put("name", "student2");
 		testingAll.deleteFromTable("testCreateTable", htblColNameValue, "OR");
 
-		p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
-		System.out.println("All Records: " + p.getRecords());
+		p1 = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
+		System.out.println("All Records: " + p1.getRecords());
 
 		x = (BTree) deserialize("data/tables/testCreateTable/BTree/ID.bin");
 		x.print();
