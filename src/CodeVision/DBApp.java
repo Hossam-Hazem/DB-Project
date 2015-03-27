@@ -1,4 +1,5 @@
 package CodeVision;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -21,7 +22,6 @@ import libs.LinearHashtable;
 public class DBApp {
 	static String tempTabe;
 	static Hashtable<String, Object> virtualDirectory;
-
 
 	public static void init() {
 		virtualDirectory = new Hashtable<String, Object>();
@@ -108,8 +108,9 @@ public class DBApp {
 			String temp = strTableName + ", " + (String) entry.getKey() + ", "
 					+ (String) entry.getValue() + ", "
 					+ (entry.getKey().equals(strKeyColName) ? "true" : "false")
-					+ ", " + "false" + ", "
-					+ htblColNameRefs.get(entry.getKey()) + "\n";
+					+ ", "
+					+ (entry.getKey().equals(strKeyColName) ? "true" : "false")
+					+ ", " + htblColNameRefs.get(entry.getKey()) + "\n";
 
 			metaInfo += temp;
 			System.out.println(entry.getKey() + " : " + entry.getValue());
@@ -340,21 +341,22 @@ public class DBApp {
 				virtualDirectory.put(RPath, p);
 
 				Iterator indicesI = indices.iterator();
-				while(indicesI.hasNext()){
-					String Column=(String) indicesI.next();
-				 BTreePath = "data/tables/" + strTableName + "/" + "BTree/"
+				while (indicesI.hasNext()) {
+					String Column = (String) indicesI.next();
+					BTreePath = "data/tables/" + strTableName + "/" + "BTree/"
 							+ Column + ".bin";
-				 LHTPath = "data/tables/" + strTableName + "/" + "hashtable/"
-						+ Column + ".bin";
-				  B = (BTree) loadFileDyn(BTreePath);
-					// LinearHashtable L = (LinearHashtable) deserialize(LHTPath);
-				  L = (LinearHashtable) loadFileDyn(LHTPath);
-				L.delete(r.get(Column));
-				Comparable O = (Comparable) getValueIfValid(strTableName,Column,
-						r.get(Column));
-				B.delete( O);
-				virtualDirectory.put(LHTPath, L);
-				virtualDirectory.put(BTreePath, B);
+					LHTPath = "data/tables/" + strTableName + "/"
+							+ "hashtable/" + Column + ".bin";
+					B = (BTree) loadFileDyn(BTreePath);
+					// LinearHashtable L = (LinearHashtable)
+					// deserialize(LHTPath);
+					L = (LinearHashtable) loadFileDyn(LHTPath);
+					L.delete(r.get(Column));
+					Comparable O = (Comparable) getValueIfValid(strTableName,
+							Column, r.get(Column));
+					B.delete(O);
+					virtualDirectory.put(LHTPath, L);
+					virtualDirectory.put(BTreePath, B);
 				}
 			}
 

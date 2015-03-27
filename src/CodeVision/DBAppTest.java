@@ -17,7 +17,7 @@ public class DBAppTest {
 		testingAll = new DBApp();
 		
 		// createTable Test
-		/*
+		
 		testingAll.init();
 		Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
 		htblColNameType.put("name", "java.lang.String");
@@ -32,7 +32,7 @@ public class DBAppTest {
 		testingAll.createTable("testCreateTable", htblColNameType, htblColNameRefs,
 				"ID");
 		testingAll.saveAll();
-		*/
+		
 		
 		//----------------------------------------------------------------------------------------
 		
@@ -98,8 +98,8 @@ public class DBAppTest {
 		testingAll.saveAll();
 		Page p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
 		System.out.println("All Records: " + p.getRecords());
-		*/
 		
+		*/
 		//----------------------------------------------------------------------------------------
 		
 		// deleteFromTable Test
@@ -182,7 +182,7 @@ public class DBAppTest {
 		
 		//----------------------------------------------------------------------------------------
 		// saveAll Test
-		
+		/*
 		testingAll.init();
 		Hashtable<String, String> insertionWithSave = new Hashtable<String, String>();
 		insertionWithSave.put("name", "student with save");
@@ -201,7 +201,7 @@ public class DBAppTest {
 		
 		Page p = (Page) deserialize("data/tables/testCreateTable/pages/0.class");
 		System.out.println("All Records: " + p.getRecords());
-		
+		*/
 		
 		
 	}	
