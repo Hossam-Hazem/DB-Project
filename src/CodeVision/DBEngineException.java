@@ -1,3 +1,4 @@
+package CodeVision;
 @SuppressWarnings("serial")
 public class DBEngineException extends Exception {
 	public DBEngineException() {

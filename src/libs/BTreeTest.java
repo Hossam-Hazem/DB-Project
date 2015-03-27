@@ -9,7 +9,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 
 
-package BPTree;
+package libs;
 
 public class BTreeTest {
 	public static void main(String args[]){

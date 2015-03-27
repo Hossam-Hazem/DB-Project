@@ -1,3 +1,4 @@
+package CodeVision;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,7 +9,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-import BPTree.BTree;
+import libs.BTree;
+import libs.LinearHashtable;
 
 public class Table implements Serializable {
 	private ArrayList<String> allPages;

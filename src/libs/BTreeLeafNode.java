@@ -1,4 +1,4 @@
-package BPTree;
+package libs;
 
 import java.io.FileInputStream;
 import java.io.IOException;

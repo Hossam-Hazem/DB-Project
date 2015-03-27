@@ -1,3 +1,4 @@
+package CodeVision;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,7 +15,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import BPTree.BTree;
+import libs.BTree;
+import libs.LinearHashtable;
 
 public class DBApp {
 	static String tempTabe;
