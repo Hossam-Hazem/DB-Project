@@ -16,6 +16,8 @@ public class Page implements Serializable {
 	private int rowsCounter;
 	private ArrayList<Hashtable<String, String>> records;
 	private String pageName;
+	
+	private static final long serialVersionUID = -6451792610345910852L;
 
 	public Page(String pageName) throws IOException {
 		this.MaximumRowsCountinPage = getPageSize();
