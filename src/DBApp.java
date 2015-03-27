@@ -288,17 +288,22 @@ public class DBApp {
 				// Page p = (Page) deserialize(RPath);
 				Page p = (Page) loadFileDyn(RPath);
 				p.removeRecord(PrimaryKeyColumn, PrimaryKeyValue);
-				L.delete(PrimaryKeyValue);
-				
-				B.delete( (Comparable) getValueIfValid(strTableName,PrimaryKeyColumn,
-						 PrimaryKeyValue));
-				// serialize(RPath, p);
 				virtualDirectory.put(RPath, p);
+				
+				Iterator indicesI = indices.iterator();
+				while(indicesI.hasNext()){
+					String Column=(String) indicesI.next();
+				L.delete(r.get(Column));
+				B.delete( (Comparable) getValueIfValid(strTableName,Column,
+						r.get(Column)));
+				// serialize(RPath, p);
 				// serialize(LHTPath, L);
 				virtualDirectory.put(LHTPath, L);
 				// serialize(BTreePath, B);
 				virtualDirectory.put(BTreePath, B);
+				}
 			}
+			
 		}
 
 	}
@@ -413,10 +418,16 @@ public class DBApp {
 				if (Columnrange.charAt(0) == '<')
 					tempo = p
 							.getRecordLessthan(strTable,ColumnName, ColumnValue);
-
-				Iterator tempoI = tempoe.iterator();
+				
+				Iterator tempoI = tempo.iterator();
 				while (tempoI.hasNext()) {
 					Hashtable<String, String> r = (Hashtable<String, String>) tempoI
+							.next();
+						result.add(r);
+				}
+				Iterator tempoeI = tempoe.iterator();
+				while (tempoeI.hasNext()) {
+					Hashtable<String, String> r = (Hashtable<String, String>) tempoeI
 							.next();
 						result.add(r);
 				}
@@ -1092,17 +1103,27 @@ public class DBApp {
 		  Hashtable<String, String> htblColNameRange = new Hashtable<String,
 		  String>();
 		  
-		  htblColNameRange.put("age", "<5"); //
-		  htblColNameRange.put("ID",">=286205"); 
+		  htblColNameRange.put("age", ">0"); //
+		  //htblColNameRange.put("ID",">=286205"); 
 		 // htblColNameRange.put("name", "omar");
 		 // htblColNameRange.put("major", "cs");
 		 // deleteFromTable("testDeleteV21", htblColNameRange, "OR");
 		//  htblColNameRange.put("major", "cs");
 		  Iterator I = selectRangeFromTableV2("testvalueRange",
 		  htblColNameRange, "AND");
-		  
-		  while (I.hasNext()) { System.out.println("done " +
+		  while (I.hasNext()) { System.out.println("BEFORE " +
 		  I.next().toString()); }
+		  
+		  Hashtable<String, String> delete = new Hashtable<String,
+				  String>();	  
+		 delete.put("age", "3");
+		 delete.put("ID", "2810999");
+		 deleteFromTable("testvalueRange", delete, "OR");
+		 
+		  I = selectRangeFromTableV2("testvalueRange",
+				  htblColNameRange, "OR");
+				  while (I.hasNext()) { System.out.println("AFTER " +
+				  I.next().toString()); }
 		
 	}
 }
