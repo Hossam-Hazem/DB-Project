@@ -1,5 +1,5 @@
 Table Name, Column Name, Column Type, Key, Indexed, References
 testAll, col4, str, false, false, null
-testAll, col3, int, false, false, null
+testAll, col3, int, false, true, null
 testAll, col2, int, true, false, null
 testAll, col1, str, false, false, table1.id

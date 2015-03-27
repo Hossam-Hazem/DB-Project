@@ -182,8 +182,8 @@ public class DBApp {
 		br.close();
 		fileWriter.close();
 		// //Indexing
-		String Tablepath = "data/tables/" + strTableName + "/" + strTableName
-				+ ".bin";
+		//String Tablepath = "data/tables/" + strTableName + "/" + strTableName
+		//		+ ".bin";
 		// Table T = (Table) deserialize(Tablepath);
 		// Table T = (Table) loadFileDyn(Tablepath);
 		Table T = new Table(strTableName);
@@ -192,7 +192,7 @@ public class DBApp {
 		LinearHashtable L = new LinearHashtable();
 		for (int i = 0; i < T.getNameCounter(); i++) {
 			String Pagepath = "data/tables/" + strTableName + "/" + "pages/"
-					+ i;
+					+ i + ".class";
 			// Page P = (Page) deserialize(Pagepath);
 			Page P = (Page) loadFileDyn(Pagepath);
 
@@ -210,7 +210,7 @@ public class DBApp {
 		String LHTPath = "data/tables/" + strTableName + "/" + "hashtable/"
 				+ strColName + ".bin";
 		// serialize(Tablepath, T);
-		virtualDirectory.put(Tablepath, T);
+		//virtualDirectory.put(Tablepath, T);
 		// serialize(BTreePath, B);
 		virtualDirectory.put(BTreePath, B);
 		// serialize(LHTPath, L);
@@ -895,7 +895,7 @@ public class DBApp {
 		// ===> execute once and comment createTable and execute multiple times
 		createTable("testAll", htblColNameType, htblColNameRefs, "col2");
 
-		// createIndex("testAll", "col3");
+		//createIndex("testAll", "col3");
 
 		// Clean csv file
 		/*
